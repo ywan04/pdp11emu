@@ -1,5 +1,5 @@
-#ifndef PDP11_H
-#define PDP11_H
+#ifndef PDP11_MEMORY__H
+#define PDP11_MEMORY__H
 
 #define MEMSIZE (64*1024) // 64KB
 
@@ -13,4 +13,4 @@ void writew(address_t addr, word_t w);
 word_t readw(address_t addr);
 void loadfile(const char *filename);
 
-#endif // PDP11_H
+#endif // PDP11_MEMORY__H

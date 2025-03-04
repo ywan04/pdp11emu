@@ -1,4 +1,4 @@
-#include "pdp11.h"
+#include "pdp11_memory.h"
 
 #include <stdio.h>
 
@@ -6,8 +6,6 @@ static union {
 	word_t words[MEMSIZE/2];
 	byte_t bytes[MEMSIZE];
 } memory;
-
-word_t reg[8];
 
 void writeb(address_t addr, byte_t b)
 {
@@ -35,12 +33,12 @@ void loadfile(const char *filename)
 	address_t addr, n, i;
 	byte_t b;
 
-	f = fopen(filename, "rb");
+	f = fopen(filename, "r");
 
-	fread(&addr, sizeof(address_t), 1, f);
-	fread(&n, sizeof(address_t), 1, f);
+	fscanf(f, "%hx", &addr);
+	fscanf(f, "%hx", &n);
 	for (i = 0; i < n; ++i) {
-		fread(&b, 1, 1, f);
+		fscanf(f, "%hhx", &b);
 		writeb(addr+i, b);
 	}
 }
