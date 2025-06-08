@@ -44,8 +44,8 @@ void run(void)
 	PC = 01000;
 
 	for (;;) {
-		word_t w = readw(pc);
-		printf("%06o %06o: ", pc, w); // from printf to trace
+		word_t w = readw(PC);
+		printf("%06o %06o: ", PC, w); // from printf to trace
 		PC += 2;
 
 		if (w == 0) {
