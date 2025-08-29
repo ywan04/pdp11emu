@@ -1,7 +1,9 @@
-#include "pdp_processor.h"
-#include "pdp_memory.h"
+#include "pdp11_processor.h"
+#include "pdp11_memory.h"
+#include "debug.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define PC reg[7]
 
@@ -27,15 +29,15 @@ void do_halt(void)
 	exit(0);
 }
 
-void do_mov()
+void do_mov(void)
 {
 }
 
-void do_add()
+void do_add(void)
 {
 }
 
-void do_nothing()
+void do_nothing(void)
 {
 }
 
@@ -45,7 +47,7 @@ void run(void)
 
 	for (;;) {
 		word_t w = readw(PC);
-		printf("%06o %06o: ", PC, w); // from printf to trace
+		trace("%06o %06o: ", PC, w);
 		PC += 2;
 
 		if (w == 0) {
