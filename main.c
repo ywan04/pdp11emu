@@ -1,4 +1,5 @@
 #include "pdp11_memory.h"
+#include "pdp11_processor.h"
 
 #include <assert.h>
 
@@ -25,6 +26,9 @@ void mem_test(void)
 int main(int argc, char *argv[])
 {
 	mem_test();
+	
+	loadfile(argv[1]);
+	run();
 
 	return 0;
 }
