@@ -1,7 +1,7 @@
 #ifndef PDP11_MEMORY__H
 #define PDP11_MEMORY__H
 
-#define MEMSIZE (128*1024) // 128KB
+#define MEMSIZE (64*1024) // 64KB
 
 typedef unsigned char byte_t;
 typedef unsigned short word_t;

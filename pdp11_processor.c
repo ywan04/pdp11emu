@@ -30,6 +30,17 @@ instruction_t ins[] = {
 static word_t reg[8];
 static word_t curins;
 
+word_t *get_src(void)
+{
+	// TODO
+	return &reg[0]; // or something like this
+}
+
+word_t *get_dst(void)
+{
+	// TODO
+}
+
 void do_halt(void)
 {
 	trace("halt.\n");
