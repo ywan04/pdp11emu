@@ -30,15 +30,64 @@ instruction_t ins[] = {
 static word_t reg[8];
 static word_t curins;
 
-word_t *get_src(void)
+char get_src(word_t *adr)
 {
-	// TODO
-	return &reg[0]; // or something like this
+	char ss;
+
+	ss = (char)(curins & 0000077);
+
+	return parse_arg(&adr, ss);
 }
 
-word_t *get_dst(void)
+char get_dst(word_t *adr)
 {
-	// TODO
+	char dd;
+	
+	dd = (char)((curins & 0007700) >> 6);
+
+	return parse_arg(&adr, dd);
+}
+
+/*
+ * Returns 1 if src is register and 0 otherwise
+ */
+char parse_arg(word_t **adr, char arg)
+{
+	char mod, regn;
+	
+	mod  = (char)((ss >> 3) & 07);
+	regn = (char)(ss & 07);
+
+	switch (mod) {
+	case 0:
+		**adr = regn;
+		return 1;
+	case 1:
+		**adr = reg[regn];
+		return 0;
+	case 2:
+		**adr = reg[regn];
+		reg[regn] += 2;
+		return 0;
+	case 3:
+		**adr = readw(reg[regn]);
+		reg[regn] += 2;
+		return 0;
+	case 4:
+		reg[regn] -= 2;
+		**adr = reg[regn];
+		return 0;
+	case 5:
+		reg[regn] -= 2;
+		**adr = readw(reg[regn]);
+		return 0;
+	case 6:
+		// TODO
+		return 0;
+	case 7:
+		// TODO
+		return 0;
+	}
 }
 
 void do_halt(void)
