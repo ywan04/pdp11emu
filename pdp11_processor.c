@@ -89,6 +89,9 @@ unsigned char parse_arg(word_t **adr, unsigned char arg)
 		**adr = readw(reg[regn] + readw(PC));
 		PC += 2;
 		return 0;
+	default:
+		trace("error: mod cannot be larger than 7\n");
+		return 2;
 	}
 }
 
