@@ -45,13 +45,13 @@ unsigned char get_dst(word_t *adr)
 	
 	dd = (unsigned char)((curins & 0007700) >> 6);
 
-	return parse_arg(&adr, dd);
+	return parse_arg(adr, dd);
 }
 
 /*
  * Returns 1 if src is register and 0 otherwise
  */
-unsigned char parse_arg(word_t **adr, unsigned char arg)
+unsigned char parse_arg(word_t *adr, unsigned char arg)
 {
 	unsigned char mod, regn;
 	
@@ -60,38 +60,56 @@ unsigned char parse_arg(word_t **adr, unsigned char arg)
 
 	switch (mod) {
 	case 0:
-		**adr = regn;
+		*adr = regn;
 		return 1;
 	case 1:
-		**adr = reg[regn];
+		*adr = reg[regn];
 		return 0;
 	case 2:
-		**adr = reg[regn];
+		*adr = reg[regn];
 		reg[regn] += 2;
 		return 0;
 	case 3:
-		**adr = readw(reg[regn]);
+		*adr = readw(reg[regn]);
 		reg[regn] += 2;
 		return 0;
 	case 4:
 		reg[regn] -= 2;
-		**adr = reg[regn];
+		*adr = reg[regn];
 		return 0;
 	case 5:
 		reg[regn] -= 2;
-		**adr = readw(reg[regn]);
+		*adr = readw(reg[regn]);
 		return 0;
 	case 6:
-		**adr = reg[regn] + readw(PC);
+		*adr = reg[regn] + readw(PC);
 		PC += 2;
 		return 0;
 	case 7:
-		**adr = readw(reg[regn] + readw(PC));
+		*adr = readw(reg[regn] + readw(PC));
 		PC += 2;
 		return 0;
 	default:
 		trace("error: mod cannot be larger than 7\n");
 		return 2;
+	}
+}
+
+void write_arg(unsigned char is_reg, word_t adr, word_t val)
+{
+	if (is_reg) {
+		r[adr] = val;
+	} else {
+		writew(adr, val);
+	}
+}
+
+word_t read_arg(usinged char is_reg, word_t adr)
+{
+	if (is_reg) {
+		return r[adr];
+	} else {
+		return readw(adr);
 	}
 }
 
@@ -104,10 +122,36 @@ void do_halt(void)
 
 void do_mov(void)
 {
+	word_t src_adr, dst_adr, val;
+
+	val = read_arg(get_src(&src_adr), src_adr);
+
+	write_arg(get_dst(&dst_adr), dst_adr, val);
+	
+	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = 0;
 }
 
 void do_add(void)
 {
+	word_t src_adr, src_val, src_is_reg;
+	word_t dst_adr, dst_val, dst_is_reg;
+	word_t val;
+
+	src_is_reg = get_src(&src_adr);
+	src_val = read_arg(src_is_reg, src_adr);
+
+	dst_is_reg = get_dst(&dst_adr);
+	dst_val = read_arg(dst_is_reg, dst_adr);
+
+	val = src_val + dst_val;
+	write_arg(dst_is_reg, dst_adr, val);
+	
+	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	//flag.V = ;
+	//flag.C = ;
 }
 
 void do_nop(void)
