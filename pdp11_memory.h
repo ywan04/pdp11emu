@@ -1,16 +1,14 @@
 #ifndef PDP11_MEMORY__H
 #define PDP11_MEMORY__H
 
+#include <stdint.h>
+
 #define MEMSIZE (64*1024) // 64KB
 
-typedef unsigned char byte_t;
-typedef unsigned short word_t;
-typedef unsigned short address_t;
-
-void writeb(address_t addr, byte_t b);
-byte_t readb(address_t addr);
-void writew(address_t addr, word_t w);
-word_t readw(address_t addr);
+void writeb(uint16_t addr, uint8_t b);
+uint8_t readb(uint16_t addr);
+void writew(uint16_t addr, uint16_t w);
+uint16_t readw(uint16_t addr);
 void loadfile(const char *filename);
 
 #endif // PDP11_MEMORY__H

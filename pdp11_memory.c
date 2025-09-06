@@ -3,42 +3,42 @@
 #include <stdio.h>
 
 static union {
-	word_t words[MEMSIZE/2];
-	byte_t bytes[MEMSIZE];
+	uint16_t words[MEMSIZE/2];
+	uint8_t bytes[MEMSIZE];
 } memory;
 
-void writeb(address_t addr, byte_t b)
+void writeb(uint16_t adr, uint8_t b)
 {
-	memory.bytes[addr] = b;
+	memory.bytes[adr] = b;
 }
 
-byte_t readb(address_t addr)
+uint8_t readb(uint16_t adr)
 {
-	return memory.bytes[addr];
+	return memory.bytes[adr];
 }
 
-void writew(address_t addr, word_t w)
+void writew(uint16_t adr, uint8_t w)
 {
-	memory.words[addr/2] = w;
+	memory.words[adr/2] = w;
 }
 
-word_t readw(address_t addr)
+uint16_t readw(uint16_t adr)
 {
-	return memory.words[addr/2];
+	return memory.words[adr/2];
 }
 
 void loadfile(const char *filename)
 {
 	FILE *f;
-	address_t addr, n, i;
-	byte_t b;
+	uint16_t adr, n, i;
+	uint8_t b;
 
 	f = fopen(filename, "r");
 
-	fscanf(f, "%hx", &addr);
+	fscanf(f, "%hx", &adr);
 	fscanf(f, "%hx", &n);
 	for (i = 0; i < n; ++i) {
 		fscanf(f, "%hhx", &b);
-		writeb(addr+i, b);
+		writeb(adr+i, b);
 	}
 }

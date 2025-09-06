@@ -5,8 +5,8 @@
 
 void mem_test(void)
 {
-	byte_t a, b;
-	word_t w;
+	uint8_t a, b;
+	uint16_t w;
 
 	writew(0, 0x5498);
 	a = readb(0);

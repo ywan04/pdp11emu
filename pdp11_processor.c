@@ -8,15 +8,15 @@
 #define PC reg[7]
 
 struct {
-	unsigned char N : 1;
-	unsigned char Z : 1;
-	unsigned char V : 1;
-	unsigned char C : 1;
+	uint8_t N : 1;
+	uint8_t Z : 1;
+	uint8_t V : 1;
+	uint8_t C : 1;
 } flag;
 
 typedef struct {
-	word_t mask;
-	word_t opcode;
+	uint16_t mask;
+	uint16_t opcode;
 	char *name;
 	void (*do_func)(void);
 } instruction_t;
@@ -27,23 +27,23 @@ instruction_t ins[] = {
 	{ 0170000, 0060000, "add", do_add },
 };
 
-static word_t reg[8];
-static word_t curins;
+static uint16_t reg[8];
+static uint16_t curins;
 
-unsigned char get_src(word_t *adr)
+uint8_t get_src(uint16_t *adr)
 {
-	unsigned char ss;
+	uint8_t ss;
 
-	ss = (unsigned char)(curins & 0000077);
+	ss = (uint8_t)(curins & 0000077);
 
 	return parse_arg(adr, ss);
 }
 
-unsigned char get_dst(word_t *adr)
+uint8_t get_dst(uint16_t *adr)
 {
-	unsigned char dd;
+	uint8_t dd;
 	
-	dd = (unsigned char)((curins & 0007700) >> 6);
+	dd = (uint8_t)((curins & 0007700) >> 6);
 
 	return parse_arg(adr, dd);
 }
@@ -51,12 +51,12 @@ unsigned char get_dst(word_t *adr)
 /*
  * Returns 1 if src is register and 0 otherwise
  */
-unsigned char parse_arg(word_t *adr, unsigned char arg)
+uint8_t parse_arg(uint16_t *adr, uint8_t arg)
 {
-	unsigned char mod, regn;
+	uint8_t mod, regn;
 	
-	mod  = (unsigned char)((arg >> 3) & 07);
-	regn = (unsigned char)(arg & 07);
+	mod  = arg >> 3;
+	regn = arg & 07;
 
 	switch (mod) {
 	case 0:
@@ -95,7 +95,7 @@ unsigned char parse_arg(word_t *adr, unsigned char arg)
 	}
 }
 
-void write_arg(unsigned char is_reg, word_t adr, word_t val)
+void write_arg(uint8_t is_reg, uint16_t adr, uint16_t val)
 {
 	if (is_reg) {
 		r[adr] = val;
@@ -104,7 +104,7 @@ void write_arg(unsigned char is_reg, word_t adr, word_t val)
 	}
 }
 
-word_t read_arg(usinged char is_reg, word_t adr)
+uint16_t read_arg(uint8_t is_reg, uint16_t adr)
 {
 	if (is_reg) {
 		return r[adr];
@@ -122,7 +122,7 @@ void do_halt(void)
 
 void do_mov(void)
 {
-	word_t src_adr, dst_adr, val;
+	uint16_t src_adr, dst_adr, val;
 
 	val = read_arg(get_src(&src_adr), src_adr);
 
@@ -135,9 +135,9 @@ void do_mov(void)
 
 void do_add(void)
 {
-	word_t src_adr, src_val, src_is_reg;
-	word_t dst_adr, dst_val, dst_is_reg;
-	word_t val;
+	uint16_t src_adr, src_val, src_is_reg;
+	uint16_t dst_adr, dst_val, dst_is_reg;
+	uint16_t val;
 
 	src_is_reg = get_src(&src_adr);
 	src_val = read_arg(src_is_reg, src_adr);
