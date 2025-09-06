@@ -36,7 +36,7 @@ unsigned char get_src(word_t *adr)
 
 	ss = (unsigned char)(curins & 0000077);
 
-	return parse_arg(&adr, ss);
+	return parse_arg(adr, ss);
 }
 
 unsigned char get_dst(word_t *adr)
@@ -150,8 +150,8 @@ void do_add(void)
 	
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
-	//flag.V = ;
-	//flag.C = ;
+	flag.V = ((val & 0100000) != (dst_val & 0100000));
+	flag.C = (val < dst_val);
 }
 
 void do_nop(void)
