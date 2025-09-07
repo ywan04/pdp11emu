@@ -95,24 +95,6 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg)
 	}
 }
 
-void write_arg(uint8_t is_reg, uint16_t adr, uint16_t val)
-{
-	if (is_reg) {
-		r[adr] = val;
-	} else {
-		writew(adr, val);
-	}
-}
-
-uint16_t read_arg(uint8_t is_reg, uint16_t adr)
-{
-	if (is_reg) {
-		return r[adr];
-	} else {
-		return readw(adr);
-	}
-}
-
 void do_halt(void)
 {
 	trace("halt.\n");
@@ -124,9 +106,13 @@ void do_mov(void)
 {
 	uint16_t src_adr, dst_adr, val;
 
-	val = read_arg(get_src(&src_adr), src_adr);
+	val = (get_src(&src_adr)) ? r[src_adr] : readw(src_adr);
 
-	write_arg(get_dst(&dst_adr), dst_adr, val);
+	if (get_dst(&dst_adr)) {
+		r[dst_adr] = val;
+	} else {
+		writew(dst_adr, val);
+	}
 	
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
@@ -135,18 +121,21 @@ void do_mov(void)
 
 void do_add(void)
 {
-	uint16_t src_adr, src_val, src_is_reg;
+	uint16_t src_adr, src_val;
 	uint16_t dst_adr, dst_val, dst_is_reg;
 	uint16_t val;
 
-	src_is_reg = get_src(&src_adr);
-	src_val = read_arg(src_is_reg, src_adr);
+	src_val = (get_src(&src_adr)) ? r[src_adr] : readw(src_adr);
 
 	dst_is_reg = get_dst(&dst_adr);
-	dst_val = read_arg(dst_is_reg, dst_adr);
+	dst_val = (dst_is_reg) ? r[dst_adr] : readw(dst_adr);
 
 	val = src_val + dst_val;
-	write_arg(dst_is_reg, dst_adr, val);
+	if (dst_is_reg) {
+		r[dst_adr] = val;
+	} else {
+		writew(dst_adr, val);
+	}
 	
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
