@@ -24,7 +24,9 @@ typedef struct {
 instruction_t ins[] = {
 	{ 0177777, 0000000, "halt", do_halt },
 	{ 0170000, 0010000, "mov", do_mov },
+	{ 0170000, 0020000, "cmp", do_cmp },
 	{ 0170000, 0060000, "add", do_add },
+	{ 0170000, 0160000, "sub", do_sub },
 };
 
 static uint16_t reg[8];
@@ -117,6 +119,25 @@ void do_mov(void)
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = 0;
+}
+
+void do_cmp(void)
+{
+	uint16_t src_adr, dst_adr;
+	uint16_t src_val, dst_val, val;
+	uint16_t neg_bit;
+
+	src_val = (get_src(&src_adr)) ? r[src_adr] : readw(src_adr);
+	dst_val = (get_dst(&dst_adr)) ? r[dst_adr] : readw(dst_adr);
+	val = src_val - dst_val;
+
+	neg_bit = val & 0100000;
+	
+	flag.N = (neg_bit != 0);
+	flag.Z = (val == 0);
+	flag.V = (neg_bit != (src_val & 0100000))
+		&& (neg_bit != (dst_val & 0100000));
+	flag.C = (dst_val > src_val);
 }
 
 void do_add(void)
