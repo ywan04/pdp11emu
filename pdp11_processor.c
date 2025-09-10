@@ -22,12 +22,36 @@ typedef struct {
 } instruction_t;
 
 instruction_t ins[] = {
-	{ 0177777, 0000000, "halt", do_halt },
+	/* SINGLE OPERAND */
+	/* General */
+	/* Rotate & Shift */
+	/* Multiple Precision */
+
+	/* DOUBLE OPERAND */
+	
+	/* General */
 	{ 0170000, 0010000, "mov", do_mov },
 	{ 0170000, 0020000, "cmp", do_cmp },
 	{ 0170000, 0060000, "add", do_add },
 	{ 0170000, 0160000, "sub", do_sub },
+	/* Logical */
+	/* Register */
+
+	/* BRANCH */
+	/* Branches */
+	/* Signed Conditional Branches */
+	/* Unsigned Conditional Branches */
+
+	/* JUMP & SUBROUTINE */
 	{ 0177000, 0077000, "sob", do_sob },
+
+	/* TRAP & INTERRUPT */
+
+	/* MISCELLANEOUS */
+	{ 0177777, 0000000, "halt", do_halt },
+	{ 0177777, 0000240, "nop", do_nop },
+
+	/* CONDITION CODE OPERATORS */
 };
 
 static uint16_t reg[8];
