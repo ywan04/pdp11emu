@@ -24,6 +24,7 @@ typedef struct {
 instruction_t ins[] = {
 	/* SINGLE OPERAND */
 	/* General */
+	{ 0177700, 0005000, "clr", do_clr },
 	/* Rotate & Shift */
 	/* Multiple Precision */
 
@@ -120,6 +121,20 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg)
 		trace("error: mod cannot be larger than 7\n");
 		return 2;
 	}
+}
+
+void do_clr(void)
+{
+	uint16_t dst_adr;
+	
+	if (get_dst(&dst_adr)) {
+		r[dst_adr] = 0;
+	} else {
+		writew(dst_adr, 0);
+	}
+
+	flag.N = flag.V = flag.C = 0;
+	flag.Z = 1;
 }
 
 void do_halt(void)
