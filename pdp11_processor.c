@@ -27,6 +27,7 @@ instruction_t ins[] = {
 	{ 0170000, 0020000, "cmp", do_cmp },
 	{ 0170000, 0060000, "add", do_add },
 	{ 0170000, 0160000, "sub", do_sub },
+	{ 0177000, 0077000, "sob", do_sob },
 };
 
 static uint16_t reg[8];
@@ -194,6 +195,19 @@ void do_sub(void)
 	flag.V = ((neg_bit != (dst_val & 0100000))
 		  && (neg_bit != (src_val & 0100000)));
 	flag.C = (src_val > dst_val);
+}
+
+void do_sob(void)
+{
+	uint16_t r, nn;
+
+	nn = curins & 0000077;
+	r = (curins & 0000700) >> 6;
+
+	--reg[r];
+
+	if (reg[r])
+		PC = PC - 2 * nn;
 }
 
 void do_nop(void)
