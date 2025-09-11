@@ -22,9 +22,12 @@ typedef struct {
 } instruction_t;
 
 instruction_t ins[] = {
+	
 	/* SINGLE OPERAND */
+	
 	/* General */
 	{ 0177700, 0005000, "clr", do_clr },
+	{ 0177700, 0005100, "com", do_com },
 	/* Rotate & Shift */
 	/* Multiple Precision */
 
@@ -39,16 +42,19 @@ instruction_t ins[] = {
 	/* Register */
 
 	/* BRANCH */
+
 	/* Branches */
 	/* Signed Conditional Branches */
 	/* Unsigned Conditional Branches */
 
 	/* JUMP & SUBROUTINE */
+
 	{ 0177000, 0077000, "sob", do_sob },
 
 	/* TRAP & INTERRUPT */
 
 	/* MISCELLANEOUS */
+
 	{ 0177777, 0000000, "halt", do_halt },
 	{ 0177777, 0000240, "nop", do_nop },
 
@@ -135,6 +141,24 @@ void do_clr(void)
 
 	flag.N = flag.V = flag.C = 0;
 	flag.Z = 1;
+}
+
+void do_com(void)
+{
+	uint16_t dst_adr;
+	uint16_t val;
+	
+	if (get_dst(&dst_adr)) {
+		val = r[dst_adr] = ~r[dst_adr];
+	} else {
+		val = ~readw(dst_adr);
+		writew(dst_adr, val);
+	}
+
+	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = 0;
+	flag.C = 1;
 }
 
 void do_halt(void)
