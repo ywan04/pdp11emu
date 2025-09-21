@@ -28,6 +28,8 @@ instruction_t ins[] = {
 	/* General */
 	{ 0177700, 0005000, "clr", do_clr },
 	{ 0177700, 0005100, "com", do_com },
+	{ 0177700, 0005200, "inc", do_inc },
+	{ 0177700, 0005200, "dec", do_dec },
 	/* Rotate & Shift */
 	/* Multiple Precision */
 
@@ -159,6 +161,50 @@ void do_com(void)
 	flag.Z = (val == 0);
 	flag.V = 0;
 	flag.C = 1;
+}
+
+void do_inc(void)
+{
+	uint16_t dst_adr;
+	uint16_t dst_val, val;
+
+	if (get_dst(&dst_adr)) {
+		dst_val = r[dst_adr];
+		val = r[dst_adr] = dst_val + 1;
+	} else {
+		dst_val = readw(dst_adr);
+		val = dst_val + 1;
+		writew(dst_adr, val);
+	}
+
+	val_neg_bit = val & 0100000;
+	dst_val_neg_bit = dst_val & 0100000;
+	
+	flag.N = (val_neg_bit != 0);
+	flag.Z = (val == 0);
+	flag.V = (val_neg_bit != dst_val_neg_bit);
+}
+
+void do_dec(void)
+{
+	uint16_t dst_adr;
+	uint16_t dst_val, val;
+
+	if (get_dst(&dst_adr)) {
+		dst_val = r[dst_adr];
+		val = r[dst_adr] = dst_val - 1;
+	} else {
+		dst_val = readw(dst_adr);
+		val = dst_val - 1;
+		writew(dst_adr, val);
+	}
+
+	val_neg_bit = val & 0100000;
+	dst_val_neg_bit = dst_val & 0100000;
+	
+	flag.N = (val_neg_bit != 0);
+	flag.Z = (val == 0);
+	flag.V = (val_neg_bit != dst_val_neg_bit);
 }
 
 void do_halt(void)
