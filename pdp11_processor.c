@@ -53,6 +53,7 @@ instruction_t ins[] = {
 
 	/* JUMP & SUBROUTINE */
 
+	{ 0177700, 0000100, "jmp", do_jmp },
 	{ 0177000, 0077000, "sob", do_sob },
 
 	/* TRAP & INTERRUPT */
@@ -342,6 +343,17 @@ void do_sub(void)
 	flag.V = ((neg_bit != (dst_val & 0100000))
 		  && (neg_bit != (src_val & 0100000)));
 	flag.C = (src_val > dst_val);
+}
+
+void do_jmp(void)
+{
+	uint16_t dst_adr;
+
+	if (get_dst(&dst_adr)) {
+		PC = r[dst_adr];
+	} else {
+		PC = readw(dst_adr);
+	}
 }
 
 void do_sob(void)
