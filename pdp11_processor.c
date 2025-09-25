@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #define PC reg[7]
+#define SP reg[6]
 
 struct {
 	uint8_t N : 1;
@@ -54,6 +55,8 @@ instruction_t ins[] = {
 	/* JUMP & SUBROUTINE */
 
 	{ 0177700, 0000100, "jmp", do_jmp },
+	{ 0177000, 0004000, "jsr", do_jsr },
+	{ 0177770, 0000020, "rts", do_rts },
 	{ 0177000, 0077000, "sob", do_sob },
 
 	/* TRAP & INTERRUPT */
@@ -303,7 +306,7 @@ void do_add(void)
 
 	val = src_val + dst_val;
 	if (dst_is_reg) {
-		r[dst_adr] = val;
+		reg[dst_adr] = val;
 	} else {
 		writew(dst_adr, val);
 	}
@@ -331,7 +334,7 @@ void do_sub(void)
 
 	val = dst_val - src_val;
 	if (dst_is_reg) {
-		r[dst_adr] = val;
+		reg[dst_adr] = val;
 	} else {
 		writew(dst_adr, val);
 	}
@@ -350,10 +353,23 @@ void do_jmp(void)
 	uint16_t dst_adr;
 
 	if (get_dst(&dst_adr)) {
-		PC = r[dst_adr];
+		PC = reg[dst_adr];
 	} else {
 		PC = readw(dst_adr);
 	}
+}
+
+void do_jsr(void)
+{
+	uint16_t dst_adr;
+	uint16_t r;
+
+	r = (curins & 0000700) >> 6;
+
+	SP -= 2;
+	writew(SP, reg[r]);
+	reg[r] = PC;
+	PC = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
 }
 
 void do_sob(void)
