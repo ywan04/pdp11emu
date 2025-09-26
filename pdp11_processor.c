@@ -372,6 +372,17 @@ void do_jsr(void)
 	PC = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
 }
 
+void do_rts(void)
+{
+	uint16_t r;
+
+	r = curins & 07;
+
+	PC = reg[r];
+	reg[r] = readw(SP);
+	SP +=2;
+}
+
 void do_sob(void)
 {
 	uint16_t r, nn;
