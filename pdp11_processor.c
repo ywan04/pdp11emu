@@ -35,6 +35,7 @@ instruction_t ins[] = {
 	{ 0177700, 0005700, "tst", do_tst },
 	/* Rotate & Shift */
 	{ 0177700, 0006000, "ror", do_ror },
+	{ 0177700, 0006100, "rol", do_rol },
 	/* Multiple Precision */
 
 	/* DOUBLE OPERAND */
@@ -266,6 +267,31 @@ void do_ror(void)
 	val >>= 1;
 	if (flag.C) {
 		val |= 0100000;
+	}
+
+	
+	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = (new_c != flag.C);
+	flag.C = new_c;
+}
+
+void do_rol(void)
+{
+	uint16_t dst_adr;
+	uint16_t val;
+	uint16_t new_c;
+	
+	if (get_dst(&dst_adr)) {
+		val = r[dst_adr];
+	} else {
+		val = readw(dst_adr);
+	}
+
+	new_c = (val & 0100000) >> 15;
+	val <<= 1;
+	if (flag.C) {
+		val |= 01;
 	}
 
 	
