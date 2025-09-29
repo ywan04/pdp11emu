@@ -37,6 +37,7 @@ instruction_t ins[] = {
 	{ 0177700, 0006000, "ror", do_ror },
 	{ 0177700, 0006100, "rol", do_rol },
 	{ 0177700, 0006200, "asr", do_asr },
+	{ 0177700, 0006300, "asl", do_asl },
 	/* Multiple Precision */
 
 	/* DOUBLE OPERAND */
@@ -316,6 +317,27 @@ void do_asr(void)
 
 	new_c = val & 01;
 	val >>= 1;
+	
+	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = flag.N ^ new_c;
+	flag.C = new_c;
+}
+
+void do_asl(void)
+{
+	uint16_t dst_adr;
+	uint16_t new_c;
+	int16_t val;
+
+	if (get_dst(&dst_adr)) {
+		val = r[dst_adr];
+	} else {
+		val = readw(dst_adr);
+	}
+
+	new_c = (val & 0100000) >> 15;
+	val <<= 1;
 	
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
