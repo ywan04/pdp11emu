@@ -76,24 +76,6 @@ instruction_t ins[] = {
 static uint16_t reg[8];
 static uint16_t curins;
 
-uint8_t get_src(uint16_t *adr)
-{
-	uint8_t ss;
-
-	ss = (uint8_t)(curins & 0000077);
-
-	return parse_arg(adr, ss);
-}
-
-uint8_t get_dst(uint16_t *adr)
-{
-	uint8_t dd;
-	
-	dd = (uint8_t)((curins & 0007700) >> 6);
-
-	return parse_arg(adr, dd);
-}
-
 /*
  * Returns 1 if src is register and 0 otherwise
  */
@@ -141,12 +123,30 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg)
 	}
 }
 
+uint8_t get_src(uint16_t *adr)
+{
+	uint8_t ss;
+
+	ss = (uint8_t)(curins & 0000077);
+
+	return parse_arg(adr, ss);
+}
+
+uint8_t get_dst(uint16_t *adr)
+{
+	uint8_t dd;
+	
+	dd = (uint8_t)((curins & 0007700) >> 6);
+
+	return parse_arg(adr, dd);
+}
+
 void do_clr(void)
 {
 	uint16_t dst_adr;
 	
 	if (get_dst(&dst_adr)) {
-		r[dst_adr] = 0;
+		reg[dst_adr] = 0;
 	} else {
 		writew(dst_adr, 0);
 	}
@@ -161,7 +161,7 @@ void do_com(void)
 	uint16_t val;
 	
 	if (get_dst(&dst_adr)) {
-		val = r[dst_adr] = ~r[dst_adr];
+		val = reg[dst_adr] = ~reg[dst_adr];
 	} else {
 		val = ~readw(dst_adr);
 		writew(dst_adr, val);
@@ -177,10 +177,11 @@ void do_inc(void)
 {
 	uint16_t dst_adr;
 	uint16_t dst_val, val;
+	uint16_t val_neg_bit, dst_val_neg_bit;
 
 	if (get_dst(&dst_adr)) {
-		dst_val = r[dst_adr];
-		val = r[dst_adr] = dst_val + 1;
+		dst_val = reg[dst_adr];
+		val = reg[dst_adr] = dst_val + 1;
 	} else {
 		dst_val = readw(dst_adr);
 		val = dst_val + 1;
@@ -202,8 +203,8 @@ void do_dec(void)
 	uint16_t val_neg_bit, dst_val_neg_bit;
 	
 	if (get_dst(&dst_adr)) {
-		dst_val = r[dst_adr];
-		val = r[dst_adr] = dst_val - 1;
+		dst_val = reg[dst_adr];
+		val = reg[dst_adr] = dst_val - 1;
 	} else {
 		dst_val = readw(dst_adr);
 		val = dst_val - 1;
@@ -224,7 +225,7 @@ void do_neg(void)
 	uint16_t val;
 
 	if (get_dst(&dst_adr)) {
-		r[dst_adr] = val = ~r[dst_adr] + 1;
+		reg[dst_adr] = val = ~reg[dst_adr] + 1;
 	} else {
 		val = ~readw(dst_adr) + 1;
 		writew(dst_adr, val);
@@ -242,12 +243,10 @@ void do_tst(void)
 	uint16_t val;
 	
 	if (get_dst(&dst_adr)) {
-		val = r[dst_adr];
+		val = reg[dst_adr];
 	} else {
 		val = readw(dst_adr);
 	}
-
-	val_neg_bit = val & 0100000;
 	
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
@@ -260,7 +259,7 @@ void do_ror(void)
 	uint16_t new_c;
 	
 	if (get_dst(&dst_adr)) {
-		val = r[dst_adr];
+		val = reg[dst_adr];
 	} else {
 		val = readw(dst_adr);
 	}
@@ -285,7 +284,7 @@ void do_rol(void)
 	uint16_t new_c;
 	
 	if (get_dst(&dst_adr)) {
-		val = r[dst_adr];
+		val = reg[dst_adr];
 	} else {
 		val = readw(dst_adr);
 	}
@@ -310,7 +309,7 @@ void do_asr(void)
 	int16_t val;
 
 	if (get_dst(&dst_adr)) {
-		val = r[dst_adr];
+		val = reg[dst_adr];
 	} else {
 		val = readw(dst_adr);
 	}
@@ -331,7 +330,7 @@ void do_asl(void)
 	int16_t val;
 
 	if (get_dst(&dst_adr)) {
-		val = r[dst_adr];
+		val = reg[dst_adr];
 	} else {
 		val = readw(dst_adr);
 	}
@@ -356,10 +355,10 @@ void do_mov(void)
 {
 	uint16_t src_adr, dst_adr, val;
 
-	val = (get_src(&src_adr)) ? r[src_adr] : readw(src_adr);
+	val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
 	if (get_dst(&dst_adr)) {
-		r[dst_adr] = val;
+		reg[dst_adr] = val;
 	} else {
 		writew(dst_adr, val);
 	}
@@ -375,8 +374,8 @@ void do_cmp(void)
 	uint16_t src_val, dst_val, val;
 	uint16_t neg_bit;
 
-	src_val = (get_src(&src_adr)) ? r[src_adr] : readw(src_adr);
-	dst_val = (get_dst(&dst_adr)) ? r[dst_adr] : readw(dst_adr);
+	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
+	dst_val = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
 	val = src_val - dst_val;
 
 	neg_bit = val & 0100000;
@@ -395,10 +394,10 @@ void do_add(void)
 	uint16_t val;
 	uint16_t neg_bit;
 	
-	src_val = (get_src(&src_adr)) ? r[src_adr] : readw(src_adr);
+	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
 	dst_is_reg = get_dst(&dst_adr);
-	dst_val = (dst_is_reg) ? r[dst_adr] : readw(dst_adr);
+	dst_val = (dst_is_reg) ? reg[dst_adr] : readw(dst_adr);
 
 	val = src_val + dst_val;
 	if (dst_is_reg) {
@@ -423,10 +422,10 @@ void do_sub(void)
 	uint16_t val;
 	uint16_t neg_bit;
 	
-	src_val = (get_src(&src_adr)) ? r[src_adr] : readw(src_adr);
+	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
 	dst_is_reg = get_dst(&dst_adr);
-	dst_val = (dst_is_reg) ? r[dst_adr] : readw(dst_adr);
+	dst_val = (dst_is_reg) ? reg[dst_adr] : readw(dst_adr);
 
 	val = dst_val - src_val;
 	if (dst_is_reg) {
@@ -498,6 +497,7 @@ void do_nop(void)
 
 void run(void)
 {
+	uint8_t i, n;
 	PC = 01000;
 
 	for (;;) {

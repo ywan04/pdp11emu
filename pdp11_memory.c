@@ -17,7 +17,7 @@ uint8_t readb(uint16_t adr)
 	return memory.bytes[adr];
 }
 
-void writew(uint16_t adr, uint8_t w)
+void writew(uint16_t adr, uint16_t w)
 {
 	memory.words[adr/2] = w;
 }
