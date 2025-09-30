@@ -21,6 +21,7 @@ void do_ror(void);
 void do_rol(void);
 void do_asr(void);
 void do_asl(void);
+void do_swab(void);
 /* Multiple Precision */
 
 /* DOUBLE OPERAND */
