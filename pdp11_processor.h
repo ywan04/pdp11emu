@@ -10,28 +10,28 @@ void run(void);
 /* SINGLE OPERAND */
 	
 /* General */
-void do_clr(void);
-void do_com(void);
-void do_inc(void);
-void do_dec(void);
-void do_neg(void);
-void do_tst(void);
+void clr(void);
+void com(void);
+void inc(void);
+void dec(void);
+void neg(void);
+void tst(void);
 /* Rotate & Shift */
-void do_ror(void);
-void do_rol(void);
-void do_asr(void);
-void do_asl(void);
-void do_swab(void);
+void ror(void);
+void rol(void);
+void asr(void);
+void asl(void);
+void swab(void);
 /* Multiple Precision */
-void do_adc(void);
+void adc(void);
 
 /* DOUBLE OPERAND */
 	
 /* General */
-void do_mov(void);
-void do_cmp(void);
-void do_add(void);
-void do_sub(void);
+void mov(void);
+void cmp(void);
+void add(void);
+void sub(void);
 /* Logical */
 /* Register */
 
@@ -43,16 +43,16 @@ void do_sub(void);
 
 /* JUMP & SUBROUTINE */
 
-void do_jmp(void);
-void do_jsr(void);
-void do_rts(void);
-void do_sob(void);
+void jmp(void);
+void jsr(void);
+void rts(void);
+void sob(void);
 
 /* TRAP & INTERRUPT */
 
 /* MISCELLANEOUS */
 
-void do_halt(void);
-void do_nop(void);
+void halt(void);
+void nop(void);
 
 #endif // PDP11_PROCESSOR__H
