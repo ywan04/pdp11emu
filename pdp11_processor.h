@@ -24,6 +24,7 @@ void asl(void);
 void swab(void);
 /* Multiple Precision */
 void adc(void);
+void sbc(void);
 
 /* DOUBLE OPERAND */
 	

@@ -41,6 +41,7 @@ instruction_t ins[] = {
 	{ 0177700, 0000300, "swab", swab },
 	/* Multiple Precision */
 	{ 0177700, 0005500, "adc", adc },
+	{ 0177700, 0005600, "sbc", sbc },
 
 	/* DOUBLE OPERAND */
 	
@@ -386,6 +387,24 @@ void adc(void)
 	flag.Z = (val == 0);
 	flag.V = (val == 0100000 && flag.C);
 	flag.C = (flag.Z && flag.C);
+}
+
+void sbc(void)
+{
+	uint16_t dst_adr;
+	uint16_t val;
+
+	if (get_dst(&dst_adr)) {
+		val = reg[dst_adr] -= flag.C;
+	} else {
+		val = readw(dst_adr) - flag.C;
+		writew(dst_adr, val);
+	}
+
+	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = (val == 0077777 && flag.C);
+	flag.C = (val == 0177777 && flag.C);
 }
 
 void halt(void)
