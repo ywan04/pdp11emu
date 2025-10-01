@@ -420,7 +420,7 @@ void do_add(void)
 	uint16_t src_adr, src_val;
 	uint16_t dst_adr, dst_val, dst_is_reg;
 	uint16_t val;
-	uint16_t neg_bit;
+	uint16_t neg_bit, src_neg_bit, dst_neg_bit;
 
 	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
 	dst_val = (dst_is_reg = get_dst(&dst_adr))
@@ -450,7 +450,7 @@ void do_sub(void)
 	uint16_t src_adr, src_val;
 	uint16_t dst_adr, dst_val, dst_is_reg;
 	uint16_t val;
-	uint16_t neg_bit;
+	uint16_t neg_bit, src_neg_bit, dst_neg_bit;
 
 	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
 	dst_val = (dst_is_reg = get_dst(&dst_adr))
