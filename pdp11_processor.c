@@ -23,9 +23,9 @@ typedef struct {
 } instruction_t;
 
 instruction_t ins[] = {
-	
+
 	/* SINGLE OPERAND */
-	
+
 	/* General */
 	{ 0177700, 0005000, "clr", clr },
 	{ 0177700, 0005100, "com", com },
@@ -43,8 +43,9 @@ instruction_t ins[] = {
 	{ 0177700, 0005500, "adc", adc },
 	{ 0177700, 0005600, "sbc", sbc },
 	{ 0177700, 0006700, "sxt", sxt },
+
 	/* DOUBLE OPERAND */
-	
+
 	/* General */
 	{ 0170000, 0010000, "mov", mov },
 	{ 0170000, 0020000, "cmp", cmp },
@@ -366,8 +367,8 @@ void swab(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
+	flag.N = ((hval & 0000200) != 0);
+	flag.Z = (hval == 0);
 	flag.V = flag.C = 0;
 }
 
