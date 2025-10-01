@@ -23,6 +23,7 @@ void do_asr(void);
 void do_asl(void);
 void do_swab(void);
 /* Multiple Precision */
+void do_adc(void);
 
 /* DOUBLE OPERAND */
 	
