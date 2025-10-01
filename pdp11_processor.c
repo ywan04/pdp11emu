@@ -177,47 +177,35 @@ void do_com(void)
 void do_inc(void)
 {
 	uint16_t dst_adr;
-	uint16_t dst_val, val;
-	uint16_t val_neg_bit, dst_val_neg_bit;
+	uint16_t val;
 
 	if (get_dst(&dst_adr)) {
-		dst_val = reg[dst_adr];
-		val = reg[dst_adr] = dst_val + 1;
+		val = reg[dst_adr] = reg[dst_adr] + 1;
 	} else {
-		dst_val = readw(dst_adr);
-		val = dst_val + 1;
+		val = readw(dst_adr) + 1;
 		writew(dst_adr, val);
 	}
 
-	val_neg_bit = val & 0100000;
-	dst_val_neg_bit = dst_val & 0100000;
-	
-	flag.N = (val_neg_bit != 0);
+	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
-	flag.V = (val_neg_bit != dst_val_neg_bit);
+	flag.V = (val == 0100000);
 }
 
 void do_dec(void)
 {
 	uint16_t dst_adr;
-	uint16_t dst_val, val;
-	uint16_t val_neg_bit, dst_val_neg_bit;
+	uint16_t val;
 	
 	if (get_dst(&dst_adr)) {
-		dst_val = reg[dst_adr];
-		val = reg[dst_adr] = dst_val - 1;
+		val = reg[dst_adr] = reg[dst_adr] - 1;
 	} else {
-		dst_val = readw(dst_adr);
-		val = dst_val - 1;
+		val = readw(dst_adr) - 1;
 		writew(dst_adr, val);
 	}
 
-	val_neg_bit = val & 0100000;
-	dst_val_neg_bit = dst_val & 0100000;
-	
-	flag.N = (val_neg_bit != 0);
+	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
-	flag.V = (val_neg_bit != dst_val_neg_bit);
+	flag.V = (val == 0077777);
 }
 
 void do_neg(void)
@@ -234,8 +222,8 @@ void do_neg(void)
 
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
-	flag.V = (val != 0);
-	flag.C = flag.Z;
+	flag.V = (val == 0100000);
+	flag.C = !flag.Z;
 }
 
 void do_tst(void)
@@ -243,35 +231,36 @@ void do_tst(void)
 	uint16_t dst_adr;
 	uint16_t val;
 	
-	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr];
-	} else {
-		val = readw(dst_adr);
-	}
-	
+	val = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
+
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
+	flag.V = flag.C = 0;
 }
 
 void do_ror(void)
 {
 	uint16_t dst_adr;
+	uint16_t dst_is_reg;
 	uint16_t val;
 	uint16_t new_c;
-	
-	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr];
-	} else {
-		val = readw(dst_adr);
-	}
 
+	val = (dst_is_reg = get_dst(&dst_adr))
+		? reg[dst_adr] : readw(dst_adr);
+
+	
 	new_c = val & 01;
 	val >>= 1;
 	if (flag.C) {
 		val |= 0100000;
 	}
 
-	
+	if (dst_is_reg) {
+		reg[dst_adr] = val;
+	} else {
+		writew(dst_adr, val);
+	}
+
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = (new_c != flag.C);
@@ -281,14 +270,12 @@ void do_ror(void)
 void do_rol(void)
 {
 	uint16_t dst_adr;
+	uint16_t dst_is_reg;
 	uint16_t val;
 	uint16_t new_c;
-	
-	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr];
-	} else {
-		val = readw(dst_adr);
-	}
+
+	val = (dst_is_reg = get_dst(&dst_adr))
+		? reg[dst_adr] : readw(dst_adr);
 
 	new_c = (val & 0100000) >> 15;
 	val <<= 1;
@@ -296,7 +283,12 @@ void do_rol(void)
 		val |= 01;
 	}
 
-	
+	if (dst_is_reg) {
+		reg[dst_adr] = val;
+	} else {
+		writew(dst_adr, val);
+	}
+
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = (new_c != flag.C);
@@ -306,18 +298,22 @@ void do_rol(void)
 void do_asr(void)
 {
 	uint16_t dst_adr;
+	uint16_t dst_is_reg;
 	uint16_t new_c;
 	int16_t val;
 
-	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr];
-	} else {
-		val = readw(dst_adr);
-	}
+	val = (dst_is_reg = get_dst(&dst_adr))
+		? reg[dst_adr] : readw(dst_adr);
 
 	new_c = val & 01;
 	val >>= 1;
-	
+
+	if (dst_is_reg) {
+		reg[dst_adr] = val;
+	} else {
+		writew(dst_adr, val);
+	}
+
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = flag.N ^ new_c;
@@ -327,18 +323,22 @@ void do_asr(void)
 void do_asl(void)
 {
 	uint16_t dst_adr;
+	uint16_t dst_is_reg;
 	uint16_t new_c;
 	int16_t val;
 
-	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr];
-	} else {
-		val = readw(dst_adr);
-	}
+	val = (dst_is_reg = get_dst(&dst_adr))
+		? reg[dst_adr] : readw(dst_adr);
 
 	new_c = (val & 0100000) >> 15;
 	val <<= 1;
-	
+
+	if (dst_is_reg) {
+		reg[dst_adr] = val;
+	} else {
+		writew(dst_adr, val);
+	}
+
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = flag.N ^ new_c;
@@ -387,7 +387,7 @@ void do_mov(void)
 	} else {
 		writew(dst_adr, val);
 	}
-	
+
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = 0;
@@ -397,18 +397,21 @@ void do_cmp(void)
 {
 	uint16_t src_adr, dst_adr;
 	uint16_t src_val, dst_val, val;
-	uint16_t neg_bit;
+	uint16_t neg_bit, src_neg_bit, dst_neg_bit;
 
 	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
 	dst_val = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
+
 	val = src_val - dst_val;
 
 	neg_bit = val & 0100000;
-	
+	src_neg_bit = src_val & 0100000;
+	dst_neg_bit = dst_val & 0100000;
+
 	flag.N = (neg_bit != 0);
 	flag.Z = (val == 0);
-	flag.V = (neg_bit != (src_val & 0100000))
-		&& (neg_bit != (dst_val & 0100000));
+	flag.V = (src_neg_bit != dst_neg_bit)
+		&& (dst_neg_bit == neg_bit);
 	flag.C = (dst_val > src_val);
 }
 
@@ -418,13 +421,13 @@ void do_add(void)
 	uint16_t dst_adr, dst_val, dst_is_reg;
 	uint16_t val;
 	uint16_t neg_bit;
-	
-	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
-	dst_is_reg = get_dst(&dst_adr);
-	dst_val = (dst_is_reg) ? reg[dst_adr] : readw(dst_adr);
+	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
+	dst_val = (dst_is_reg = get_dst(&dst_adr))
+		? reg[dst_adr] : readw(dst_adr);
 
 	val = src_val + dst_val;
+
 	if (dst_is_reg) {
 		reg[dst_adr] = val;
 	} else {
@@ -432,11 +435,13 @@ void do_add(void)
 	}
 
 	neg_bit = val & 0100000;
-	
+	src_neg_bit = src_val & 0100000;
+	dst_neg_bit = dst_val & 0100000;
+
 	flag.N = (neg_bit != 0);
 	flag.Z = (val == 0);
-	flag.V = ((neg_bit != (dst_val & 0100000))
-		  && (neg_bit != (src_val & 0100000)));
+	flag.V = (src_neg_bit == dst_neg_bit)
+		&& (dst_neg_bit != neg_bit);
 	flag.C = (val < dst_val);
 }
 
@@ -446,13 +451,13 @@ void do_sub(void)
 	uint16_t dst_adr, dst_val, dst_is_reg;
 	uint16_t val;
 	uint16_t neg_bit;
-	
-	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
-	dst_is_reg = get_dst(&dst_adr);
-	dst_val = (dst_is_reg) ? reg[dst_adr] : readw(dst_adr);
+	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
+	dst_val = (dst_is_reg = get_dst(&dst_adr))
+		? reg[dst_adr] : readw(dst_adr);
 
 	val = dst_val - src_val;
+
 	if (dst_is_reg) {
 		reg[dst_adr] = val;
 	} else {
@@ -460,11 +465,13 @@ void do_sub(void)
 	}
 
 	neg_bit = val & 0100000;
-	
+	src_neg_bit = src_val & 0100000;
+	dst_neg_bit = dst_val & 0100000;
+
 	flag.N = (neg_bit != 0);
 	flag.Z = (val == 0);
-	flag.V = ((neg_bit != (dst_val & 0100000))
-		  && (neg_bit != (src_val & 0100000)));
+	flag.V = (src_neg_bit != dst_neg_bit)
+		&& (src_neg_bit == neg_bit);
 	flag.C = (src_val > dst_val);
 }
 
@@ -513,7 +520,7 @@ void do_sob(void)
 	--reg[r];
 
 	if (reg[r])
-		PC = PC - 2 * nn;
+		PC -= 2 * nn;
 }
 
 void do_nop(void)
@@ -523,6 +530,7 @@ void do_nop(void)
 void run(void)
 {
 	uint8_t i, n;
+	
 	PC = 01000;
 
 	for (;;) {
