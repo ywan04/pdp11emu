@@ -42,7 +42,7 @@ instruction_t ins[] = {
 	/* Multiple Precision */
 	{ 0177700, 0005500, "adc", adc },
 	{ 0177700, 0005600, "sbc", sbc },
-
+	{ 0177700, 0006700, "sxt", sxt },
 	/* DOUBLE OPERAND */
 	
 	/* General */
@@ -405,6 +405,21 @@ void sbc(void)
 	flag.Z = (val == 0);
 	flag.V = (val == 0077777 && flag.C);
 	flag.C = (val == 0177777 && flag.C);
+}
+
+void sxt(void)
+{
+	uint16_t dst_adr;
+	uint16_t val;
+
+	if (get_dst(&dst_adr)) {
+		val = reg[dst_adr] = (flag.N) ? 0177777 : 0;
+	} else {
+		val = (flag.N) ? 0177777 : 0;
+		writew(dst_adr, val);
+	}
+
+	flag.Z = (val == 0);
 }
 
 void halt(void)
