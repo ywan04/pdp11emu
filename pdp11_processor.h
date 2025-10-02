@@ -39,6 +39,7 @@ void bit(void);
 void bic(void);
 void bis(void);
 /* Register */
+void mul(void);
 
 /* BRANCH */
 

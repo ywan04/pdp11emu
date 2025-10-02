@@ -56,6 +56,7 @@ instruction_t ins[] = {
 	{ 0170000, 0040000, "bic", bic },
 	{ 0170000, 0050000, "bis", bis },
 	/* Register */
+	{ 0177000, 0070000, "mul", mul },
 
 	/* BRANCH */
 
@@ -590,6 +591,35 @@ void bis(void)
 
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
+	flag.V = 0;
+}
+
+void mul(void) // TODO
+{
+	uint16_t src_adr;
+	uint16_t src_val;
+	uint16_t valw;
+	uint32_t val;
+	uint8_t r;
+
+	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
+	r = (curins & 0000700) >> 6;
+
+	if (r % 2) {
+		val = (uint32_t)reg[r] * src_val;
+		reg[r] = val;
+		
+		flag.Z = (reg[r] == 0);
+		flag.C = (reg[r] != val);
+	} else {
+		valw = *(uint32_t *)&reg[r] * src_val;
+		*(uint32_t *)&reg[r] *= src_val;
+
+		flag.Z = (*(uint32_t *)&reg[r] == 0);
+		flag.C = (*(uint32_t *)&reg[r] != valw);
+	}
+
+	flag.N = ((reg[r] & 0100000) != 0);	
 	flag.V = 0;
 }
 
