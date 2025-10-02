@@ -52,6 +52,7 @@ instruction_t ins[] = {
 	{ 0170000, 0060000, "add", add },
 	{ 0170000, 0160000, "sub", sub },
 	/* Logical */
+	{ 0170000, 0030000, "bit", bit },
 	/* Register */
 
 	/* BRANCH */
@@ -527,6 +528,21 @@ void sub(void)
 	flag.V = (src_neg_bit != dst_neg_bit)
 		&& (src_neg_bit == neg_bit);
 	flag.C = (src_val > dst_val);
+}
+
+void bit(void)
+{
+	uint16_t src_adr, dst_adr;
+	uint16_t src_val, dst_val, val;
+
+	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
+	dst_val = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
+
+	val = src_val & dst_val;
+
+	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = 0;
 }
 
 void jmp(void)

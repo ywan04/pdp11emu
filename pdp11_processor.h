@@ -35,6 +35,7 @@ void cmp(void);
 void add(void);
 void sub(void);
 /* Logical */
+void bit(void);
 /* Register */
 
 /* BRANCH */
