@@ -598,25 +598,24 @@ void mul(void) // TODO
 {
 	uint16_t src_adr;
 	uint16_t src_val;
-	uint16_t valw;
-	uint32_t val;
+	uint16_t dst_val;
 	uint8_t r;
 
 	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 	r = (curins & 0000700) >> 6;
+	dst_val = reg[r];
 
 	if (r % 2) {
-		val = (uint32_t)reg[r] * src_val;
-		reg[r] = val;
-		
+		reg[r] = dst_val * src_val;
+
 		flag.Z = (reg[r] == 0);
-		flag.C = (reg[r] != val);
+		flag.C = (reg[r]/src_val != dst_val);
+		
 	} else {
-		valw = *(uint32_t *)&reg[r] * src_val;
-		*(uint32_t *)&reg[r] *= src_val;
+		*(uint32_t *)&reg[r] = (uint32_t)dst_val * src_val;
 
 		flag.Z = (*(uint32_t *)&reg[r] == 0);
-		flag.C = (*(uint32_t *)&reg[r] != valw);
+		flag.C = (reg[r+1] != dst_val * src_val);
 	}
 
 	flag.N = ((reg[r] & 0100000) != 0);	
