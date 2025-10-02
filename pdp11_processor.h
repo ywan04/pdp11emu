@@ -37,6 +37,7 @@ void sub(void);
 /* Logical */
 void bit(void);
 void bic(void);
+void bis(void);
 /* Register */
 
 /* BRANCH */

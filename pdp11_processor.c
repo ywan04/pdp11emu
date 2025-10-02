@@ -53,7 +53,8 @@ instruction_t ins[] = {
 	{ 0170000, 0160000, "sub", sub },
 	/* Logical */
 	{ 0170000, 0030000, "bit", bit },
-	{ 0170000, 0030000, "bic", bic },
+	{ 0170000, 0040000, "bic", bic },
+	{ 0170000, 0050000, "bis", bis },
 	/* Register */
 
 	/* BRANCH */
@@ -556,7 +557,30 @@ void bic(void)
 	dst_val = (dst_is_reg = get_dst(&dst_adr))
 		? reg[dst_adr] : readw(dst_adr);
 
-	val = ~src_val ^ dst_val;
+	val = ~src_val & dst_val;
+
+	if (dst_is_reg) {
+		reg[dst_adr] = val;
+	} else {
+		writew(dst_adr, val);
+	}
+
+	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = 0;
+}
+
+void bis(void)
+{
+	uint16_t src_adr, src_val;
+	uint16_t dst_adr, dst_val, dst_is_reg;
+	uint16_t val;
+
+	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
+	dst_val = (dst_is_reg = get_dst(&dst_adr))
+		? reg[dst_adr] : readw(dst_adr);
+
+	val = src_val | dst_val;
 
 	if (dst_is_reg) {
 		reg[dst_adr] = val;
