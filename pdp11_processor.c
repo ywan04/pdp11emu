@@ -27,37 +27,37 @@ instruction_t ins[] = {
 	/* SINGLE OPERAND */
 
 	/* General */
-	{ 0177700, 0005000, "clr", clr },
-	{ 0177700, 0005100, "com", com },
-	{ 0177700, 0005200, "inc", inc },
-	{ 0177700, 0005300, "dec", dec },
-	{ 0177700, 0005400, "neg", neg },
-	{ 0177700, 0005700, "tst", tst },
+	{ 0177700, 0005000, "clr", p_clr },
+	{ 0177700, 0005100, "com", p_com },
+	{ 0177700, 0005200, "inc", p_inc },
+	{ 0177700, 0005300, "dec", p_dec },
+	{ 0177700, 0005400, "neg", p_neg },
+	{ 0177700, 0005700, "tst", p_tst },
 	/* Rotate & Shift */
-	{ 0177700, 0006000, "ror", ror },
-	{ 0177700, 0006100, "rol", rol },
-	{ 0177700, 0006200, "asr", asr },
-	{ 0177700, 0006300, "asl", asl },
-	{ 0177700, 0000300, "swab", swab },
+	{ 0177700, 0006000, "ror", p_ror },
+	{ 0177700, 0006100, "rol", p_rol },
+	{ 0177700, 0006200, "asr", p_asr },
+	{ 0177700, 0006300, "asl", p_asl },
+	{ 0177700, 0000300, "swab", p_swab },
 	/* Multiple Precision */
-	{ 0177700, 0005500, "adc", adc },
-	{ 0177700, 0005600, "sbc", sbc },
-	{ 0177700, 0006700, "sxt", sxt },
+	{ 0177700, 0005500, "adc", p_adc },
+	{ 0177700, 0005600, "sbc", p_sbc },
+	{ 0177700, 0006700, "sxt", p_sxt },
 
 	/* DOUBLE OPERAND */
 
 	/* General */
-	{ 0170000, 0010000, "mov", mov },
-	{ 0170000, 0020000, "cmp", cmp },
-	{ 0170000, 0060000, "add", add },
-	{ 0170000, 0160000, "sub", sub },
+	{ 0170000, 0010000, "mov", p_mov },
+	{ 0170000, 0020000, "cmp", p_cmp },
+	{ 0170000, 0060000, "add", p_add },
+	{ 0170000, 0160000, "sub", p_sub },
 	/* Logical */
-	{ 0170000, 0030000, "bit", bit },
-	{ 0170000, 0040000, "bic", bic },
-	{ 0170000, 0050000, "bis", bis },
+	{ 0170000, 0030000, "bit", p_bit },
+	{ 0170000, 0040000, "bic", p_bic },
+	{ 0170000, 0050000, "bis", p_bis },
 	/* Register */
-	{ 0177000, 0070000, "mul", mul },
-	{ 0177000, 0071000, "div", div },
+	{ 0177000, 0070000, "mul", p_mul },
+	{ 0177000, 0071000, "div", p_div },
 
 	/* BRANCH */
 
@@ -67,17 +67,17 @@ instruction_t ins[] = {
 
 	/* JUMP & SUBROUTINE */
 
-	{ 0177700, 0000100, "jmp", jmp },
-	{ 0177000, 0004000, "jsr", jsr },
-	{ 0177770, 0000020, "rts", rts },
-	{ 0177000, 0077000, "sob", sob },
+	{ 0177700, 0000100, "jmp", p_jmp },
+	{ 0177000, 0004000, "jsr", p_jsr },
+	{ 0177770, 0000020, "rts", p_rts },
+	{ 0177000, 0077000, "sob", p_sob },
 
 	/* TRAP & INTERRUPT */
 
 	/* MISCELLANEOUS */
 
-	{ 0177777, 0000000, "halt", halt },
-	{ 0177777, 0000240, "nop", nop },
+	{ 0177777, 0000000, "halt", p_halt },
+	{ 0177777, 0000240, "nop", p_nop },
 
 	/* CONDITION CODE OPERATORS */
 };
@@ -150,7 +150,7 @@ uint8_t get_dst(uint16_t *adr)
 	return parse_arg(adr, dd);
 }
 
-void clr(void)
+void p_clr(void)
 {
 	uint16_t dst_adr;
 	
@@ -164,7 +164,7 @@ void clr(void)
 	flag.Z = 1;
 }
 
-void com(void)
+void p_com(void)
 {
 	uint16_t dst_adr;
 	uint16_t val;
@@ -182,7 +182,7 @@ void com(void)
 	flag.C = 1;
 }
 
-void inc(void)
+void p_inc(void)
 {
 	uint16_t dst_adr;
 	uint16_t val;
@@ -199,7 +199,7 @@ void inc(void)
 	flag.V = (val == 0100000);
 }
 
-void dec(void)
+void p_dec(void)
 {
 	uint16_t dst_adr;
 	uint16_t val;
@@ -216,7 +216,7 @@ void dec(void)
 	flag.V = (val == 0077777);
 }
 
-void neg(void)
+void p_neg(void)
 {
 	uint16_t dst_adr;
 	uint16_t val;
@@ -234,7 +234,7 @@ void neg(void)
 	flag.C = !flag.Z;
 }
 
-void tst(void)
+void p_tst(void)
 {
 	uint16_t dst_adr;
 	uint16_t val;
@@ -246,7 +246,7 @@ void tst(void)
 	flag.V = flag.C = 0;
 }
 
-void ror(void)
+void p_ror(void)
 {
 	uint16_t dst_adr;
 	uint16_t dst_is_reg;
@@ -275,7 +275,7 @@ void ror(void)
 	flag.C = new_c;
 }
 
-void rol(void)
+void p_rol(void)
 {
 	uint16_t dst_adr;
 	uint16_t dst_is_reg;
@@ -303,7 +303,7 @@ void rol(void)
 	flag.C = new_c;
 }
 
-void asr(void)
+void p_asr(void)
 {
 	uint16_t dst_adr;
 	uint16_t dst_is_reg;
@@ -328,7 +328,7 @@ void asr(void)
 	flag.C = new_c;
 }
 
-void asl(void)
+void p_asl(void)
 {
 	uint16_t dst_adr;
 	uint16_t dst_is_reg;
@@ -353,7 +353,7 @@ void asl(void)
 	flag.C = new_c;
 }
 
-void swab(void)
+void p_swab(void)
 {
 	uint16_t dst_adr;
 	uint16_t dst_is_reg;
@@ -377,7 +377,7 @@ void swab(void)
 	flag.V = flag.C = 0;
 }
 
-void adc(void)
+void p_adc(void)
 {
 	uint16_t dst_adr;
 	uint16_t val;
@@ -395,7 +395,7 @@ void adc(void)
 	flag.C = (flag.Z && flag.C);
 }
 
-void sbc(void)
+void p_sbc(void)
 {
 	uint16_t dst_adr;
 	uint16_t val;
@@ -413,7 +413,7 @@ void sbc(void)
 	flag.C = (val == 0177777 && flag.C);
 }
 
-void sxt(void)
+void p_sxt(void)
 {
 	uint16_t dst_adr;
 	uint16_t val;
@@ -428,14 +428,14 @@ void sxt(void)
 	flag.Z = (val == 0);
 }
 
-void halt(void)
+void p_halt(void)
 {
 	trace("halt.\n");
 
 	exit(0);
 }
 
-void mov(void)
+void p_mov(void)
 {
 	uint16_t src_adr, dst_adr, val;
 
@@ -452,7 +452,7 @@ void mov(void)
 	flag.V = 0;
 }
 
-void cmp(void)
+void p_cmp(void)
 {
 	uint16_t src_adr, dst_adr;
 	uint16_t src_val, dst_val, val;
@@ -474,7 +474,7 @@ void cmp(void)
 	flag.C = (dst_val > src_val);
 }
 
-void add(void)
+void p_add(void)
 {
 	uint16_t src_adr, src_val;
 	uint16_t dst_adr, dst_val, dst_is_reg;
@@ -504,7 +504,7 @@ void add(void)
 	flag.C = (val < dst_val);
 }
 
-void sub(void)
+void p_sub(void)
 {
 	uint16_t src_adr, src_val;
 	uint16_t dst_adr, dst_val, dst_is_reg;
@@ -534,7 +534,7 @@ void sub(void)
 	flag.C = (src_val > dst_val);
 }
 
-void bit(void)
+void p_bit(void)
 {
 	uint16_t src_adr, dst_adr;
 	uint16_t src_val, dst_val, val;
@@ -549,7 +549,7 @@ void bit(void)
 	flag.V = 0;
 }
 
-void bic(void)
+void p_bic(void)
 {
 	uint16_t src_adr, src_val;
 	uint16_t dst_adr, dst_val, dst_is_reg;
@@ -572,7 +572,7 @@ void bic(void)
 	flag.V = 0;
 }
 
-void bis(void)
+void p_bis(void)
 {
 	uint16_t src_adr, src_val;
 	uint16_t dst_adr, dst_val, dst_is_reg;
@@ -595,7 +595,7 @@ void bis(void)
 	flag.V = 0;
 }
 
-void mul(void)
+void p_mul(void)
 {
 	uint16_t src_adr;
 	uint16_t src_val;
@@ -623,7 +623,7 @@ void mul(void)
 	flag.V = 0;
 }
 
-void div(void)
+void p_div(void)
 {
 	uint16_t src_adr;
 	uint16_t src_val;
@@ -657,7 +657,7 @@ void div(void)
 	flag.Z = (reg[r] == 0);
 }
 
-void jmp(void)
+void p_jmp(void)
 {
 	uint16_t dst_adr;
 
@@ -668,7 +668,7 @@ void jmp(void)
 	}
 }
 
-void jsr(void)
+void p_jsr(void)
 {
 	uint16_t dst_adr;
 	uint16_t r;
@@ -681,7 +681,7 @@ void jsr(void)
 	PC = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
 }
 
-void rts(void)
+void p_rts(void)
 {
 	uint16_t r;
 
@@ -692,7 +692,7 @@ void rts(void)
 	SP +=2;
 }
 
-void sob(void)
+void p_sob(void)
 {
 	uint16_t r, nn;
 
@@ -705,7 +705,7 @@ void sob(void)
 		PC -= 2 * nn;
 }
 
-void nop(void)
+void p_nop(void)
 {
 }
 

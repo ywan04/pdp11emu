@@ -10,37 +10,37 @@ void run(void);
 /* SINGLE OPERAND */
 	
 /* General */
-void clr(void);
-void com(void);
-void inc(void);
-void dec(void);
-void neg(void);
-void tst(void);
+void p_clr(void);
+void p_com(void);
+void p_inc(void);
+void p_dec(void);
+void p_neg(void);
+void p_tst(void);
 /* Rotate & Shift */
-void ror(void);
-void rol(void);
-void asr(void);
-void asl(void);
-void swab(void);
+void p_ror(void);
+void p_rol(void);
+void p_asr(void);
+void p_asl(void);
+void p_swab(void);
 /* Multiple Precision */
-void adc(void);
-void sbc(void);
-void sxt(void);
+void p_adc(void);
+void p_sbc(void);
+void p_sxt(void);
 
 /* DOUBLE OPERAND */
 	
 /* General */
-void mov(void);
-void cmp(void);
-void add(void);
-void sub(void);
+void p_mov(void);
+void p_cmp(void);
+void p_add(void);
+void p_sub(void);
 /* Logical */
-void bit(void);
-void bic(void);
-void bis(void);
+void p_bit(void);
+void p_bic(void);
+void p_bis(void);
 /* Register */
-void mul(void);
-void div(void);
+void p_mul(void);
+void p_div(void);
 
 /* BRANCH */
 
@@ -50,16 +50,16 @@ void div(void);
 
 /* JUMP & SUBROUTINE */
 
-void jmp(void);
-void jsr(void);
-void rts(void);
-void sob(void);
+void p_jmp(void);
+void p_jsr(void);
+void p_rts(void);
+void p_sob(void);
 
 /* TRAP & INTERRUPT */
 
 /* MISCELLANEOUS */
 
-void halt(void);
-void nop(void);
+void p_halt(void);
+void p_nop(void);
 
 #endif // PDP11_PROCESSOR__H
