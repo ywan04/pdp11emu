@@ -40,6 +40,7 @@ void bic(void);
 void bis(void);
 /* Register */
 void mul(void);
+void div(void);
 
 /* BRANCH */
 

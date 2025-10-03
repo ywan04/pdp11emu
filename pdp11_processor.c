@@ -57,6 +57,7 @@ instruction_t ins[] = {
 	{ 0170000, 0050000, "bis", bis },
 	/* Register */
 	{ 0177000, 0070000, "mul", mul },
+	{ 0177000, 0071000, "div", div },
 
 	/* BRANCH */
 
@@ -620,6 +621,41 @@ void mul(void)
 
 	flag.N = ((reg[r] & 0100000) != 0);
 	flag.V = 0;
+}
+
+void div(void)
+{
+	uint16_t src_adr;
+	uint16_t src_val;
+	uint16_t val;
+	uint16_t rem;
+	uint8_t r;
+
+	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
+	r = (curins & 0000700) >> 6;
+
+	if (r % 2) {
+		exit(1);
+	}
+
+	flag.V = 1;
+	flag.C = 1;
+	if (src_val != 0) {
+		val = *(uint32_t *)&reg[r] / src_val;
+		rem = *(uint32_t *)&reg[r] % src_val;
+
+		if (abs(*(uint32_t *)&reg[r]) <= abs(src_val)) {
+			flag.V = 0;
+		}
+
+		reg[r] = val;
+		reg[r+1] = rem;
+
+		flag.C = 0;
+	}
+	
+	flag.N = ((reg[r] & 0100000) != 0);
+	flag.Z = (reg[r] == 0);
 }
 
 void jmp(void)
