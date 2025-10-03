@@ -357,14 +357,14 @@ void p_swab(void)
 {
 	uint16_t dst_adr;
 	uint16_t dst_is_reg;
-	uint16_t val, hval;
+	uint16_t val;
 
 	val = (dst_is_reg = get_dst(&dst_adr))
 		? reg[dst_adr] : readw(dst_adr);
-	
-	hval = (val & ~(uint16_t)0377) >> 8;
-	val <<= 8;
-	val |= hval;
+
+	((uint8_t *)&val)[0] ^= ((uint8_t *)&val)[1];
+	((uint8_t *)&val)[1] ^= ((uint8_t *)&val)[0];
+	((uint8_t *)&val)[0] ^= ((uint8_t *)&val)[1];
 
 	if (dst_is_reg) {
 		reg[dst_adr] = val;
@@ -372,8 +372,8 @@ void p_swab(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((hval & 0000200) != 0);
-	flag.Z = (hval == 0);
+	flag.N = ((((uint8_t *)&val)[1] & 0200) != 0);
+	flag.Z = (((uint8_t *)&val)[1] == 0);
 	flag.V = flag.C = 0;
 }
 
