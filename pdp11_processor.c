@@ -638,13 +638,12 @@ void div(void)
 		exit(1);
 	}
 
-	flag.V = 1;
-	flag.C = 1;
+	flag.V = flag.C = 1;
 	if (src_val != 0) {
 		val = *(uint32_t *)&reg[r] / src_val;
 		rem = *(uint32_t *)&reg[r] % src_val;
 
-		if (abs(*(uint32_t *)&reg[r]) <= abs(src_val)) {
+		if (abs(reg[r]) <= abs(src_val)) {
 			flag.V = 0;
 		}
 
