@@ -43,6 +43,7 @@ void p_mul(void);
 void p_div(void);
 void p_ash(void);
 void p_ashc(void);
+void p_xor(void);
 
 /* BRANCH */
 

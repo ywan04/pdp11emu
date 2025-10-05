@@ -60,6 +60,7 @@ instruction_t ins[] = {
 	{ 0177000, 0071000, "div", p_div },
 	{ 0177000, 0072000, "ash", p_ash },
 	{ 0177000, 0073000, "ashc", p_ashc },
+	{ 0177000, 0074000, "xor", p_xor },
 
 	/* BRANCH */
 
@@ -731,6 +732,30 @@ void p_ashc(void)
 	flag.N = (neg_bit != 0);
 	flag.Z = (val == 0);
 	flag.V = (neg_bit != old_neg_bit);
+}
+
+void p_xor(void)
+{
+	uint16_t dst_adr;
+	uint16_t dst_val;
+	uint8_t dst_is_reg;
+	uint16_t val;
+	uint8_t r;
+
+	dst_val = (dst_is_reg = get_dst(&dst_adr))
+		? reg[dst_adr] : readw(dst_adr);
+	r = (curins & 0000700) >> 6;
+
+	val = reg[r] ^ dst_val;
+	if (dst_is_reg) {
+		reg[dst_adr] = val;
+	} else {
+		writew(dst_adr, val);
+	}
+
+	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = 0;
 }
 
 void p_jmp(void)
