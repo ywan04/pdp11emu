@@ -191,7 +191,7 @@ void p_inc(void)
 	uint16_t val;
 
 	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr] = reg[dst_adr] + 1;
+		val = reg[dst_adr] += 1;
 	} else {
 		val = readw(dst_adr) + 1;
 		writew(dst_adr, val);
@@ -208,7 +208,7 @@ void p_dec(void)
 	uint16_t val;
 	
 	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr] = reg[dst_adr] - 1;
+		val = reg[dst_adr] -= 1;
 	} else {
 		val = readw(dst_adr) - 1;
 		writew(dst_adr, val);
@@ -252,7 +252,7 @@ void p_tst(void)
 void p_ror(void)
 {
 	uint16_t dst_adr;
-	uint16_t dst_is_reg;
+	uint8_t dst_is_reg;
 	uint16_t val;
 	uint16_t new_c;
 
@@ -281,7 +281,7 @@ void p_ror(void)
 void p_rol(void)
 {
 	uint16_t dst_adr;
-	uint16_t dst_is_reg;
+	uint8_t dst_is_reg;
 	uint16_t val;
 	uint16_t new_c;
 
@@ -309,7 +309,7 @@ void p_rol(void)
 void p_asr(void)
 {
 	uint16_t dst_adr;
-	uint16_t dst_is_reg;
+	uint8_t dst_is_reg;
 	uint16_t new_c;
 	int16_t val;
 
@@ -334,7 +334,7 @@ void p_asr(void)
 void p_asl(void)
 {
 	uint16_t dst_adr;
-	uint16_t dst_is_reg;
+	uint8_t dst_is_reg;
 	uint16_t new_c;
 	int16_t val;
 
@@ -359,7 +359,7 @@ void p_asl(void)
 void p_swab(void)
 {
 	uint16_t dst_adr;
-	uint16_t dst_is_reg;
+	uint8_t dst_is_reg;
 	uint16_t val;
 
 	val = (dst_is_reg = get_dst(&dst_adr))
@@ -421,10 +421,10 @@ void p_sxt(void)
 	uint16_t dst_adr;
 	uint16_t val;
 
+	val = (flag.N) ? 0177777 : 0;
 	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr] = (flag.N) ? 0177777 : 0;
+		reg[dst_adr] = val;
 	} else {
-		val = (flag.N) ? 0177777 : 0;
 		writew(dst_adr, val);
 	}
 
@@ -480,7 +480,8 @@ void p_cmp(void)
 void p_add(void)
 {
 	uint16_t src_adr, src_val;
-	uint16_t dst_adr, dst_val, dst_is_reg;
+	uint16_t dst_adr, dst_val;
+	uint8_t dst_is_reg;
 	uint16_t val;
 	uint16_t neg_bit, src_neg_bit, dst_neg_bit;
 
@@ -510,7 +511,8 @@ void p_add(void)
 void p_sub(void)
 {
 	uint16_t src_adr, src_val;
-	uint16_t dst_adr, dst_val, dst_is_reg;
+	uint16_t dst_adr, dst_val;
+	uint8_t dst_is_reg;
 	uint16_t val;
 	uint16_t neg_bit, src_neg_bit, dst_neg_bit;
 
@@ -555,7 +557,8 @@ void p_bit(void)
 void p_bic(void)
 {
 	uint16_t src_adr, src_val;
-	uint16_t dst_adr, dst_val, dst_is_reg;
+	uint16_t dst_adr, dst_val;
+	uint8_t dst_is_reg;
 	uint16_t val;
 
 	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
@@ -578,7 +581,8 @@ void p_bic(void)
 void p_bis(void)
 {
 	uint16_t src_adr, src_val;
-	uint16_t dst_adr, dst_val, dst_is_reg;
+	uint16_t dst_adr, dst_val;
+	uint8_t dst_is_reg;
 	uint16_t val;
 
 	src_val = (get_src(&src_adr)) ? reg[src_adr] : readw(src_adr);
