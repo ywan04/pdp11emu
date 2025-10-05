@@ -41,6 +41,7 @@ void p_bis(void);
 /* Register */
 void p_mul(void);
 void p_div(void);
+void p_ash(void);
 
 /* BRANCH */
 

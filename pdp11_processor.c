@@ -58,6 +58,7 @@ instruction_t ins[] = {
 	/* Register */
 	{ 0177000, 0070000, "mul", p_mul },
 	{ 0177000, 0071000, "div", p_div },
+	{ 0177000, 0072000, "ash", p_ash },
 
 	/* BRANCH */
 
@@ -655,6 +656,39 @@ void p_div(void)
 	
 	flag.N = ((reg[r] & 0100000) != 0);
 	flag.Z = (reg[r] == 0);
+}
+
+void p_ash(void)
+{
+	uint16_t src_adr;
+	uint16_t src_val;
+	uint16_t neg_bit, old_neg_bit;
+	uint8_t r;
+
+	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
+	r = (curins & 0000700) >> 6;
+	old_neg_bit = reg[r] & 0100000;
+
+	if (src_val & 040) {
+		src_val = ~src_val;
+		src_val &= 077;
+
+		reg[r] >>= src_val;
+		flag.C = src_val & 01;
+		reg[r] >>= 1;
+	} else {
+		src_val &= 077;
+
+		reg[r] <<= src_val - 1;
+		flag.C = ((reg[r] & 0100000) != 0);
+		reg[r] <<= 1;
+	}
+
+	neg_bit = reg[r] & 0100000;
+
+	flag.N = (neg_bit != 0);
+	flag.Z = (reg[r] == 0);
+	flag.V = (neg_bit != old_neg_bit);
 }
 
 void p_jmp(void)
