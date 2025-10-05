@@ -59,6 +59,7 @@ instruction_t ins[] = {
 	{ 0177000, 0070000, "mul", p_mul },
 	{ 0177000, 0071000, "div", p_div },
 	{ 0177000, 0072000, "ash", p_ash },
+	{ 0177000, 0073000, "ashc", p_ashc },
 
 	/* BRANCH */
 
@@ -674,7 +675,7 @@ void p_ash(void)
 		src_val &= 077;
 
 		reg[r] >>= src_val;
-		flag.C = src_val & 01;
+		flag.C = reg[r] & 01;
 		reg[r] >>= 1;
 	} else {
 		src_val &= 077;
@@ -688,6 +689,47 @@ void p_ash(void)
 
 	flag.N = (neg_bit != 0);
 	flag.Z = (reg[r] == 0);
+	flag.V = (neg_bit != old_neg_bit);
+}
+
+void p_ashc(void)
+{
+	uint16_t src_adr;
+	uint16_t src_val;
+	uint16_t neg_bit, old_neg_bit;
+	uint32_t val;
+	uint8_t r;
+
+	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
+	r = (curins & 0000700) >> 6;
+
+	if (r == 7) {
+		exit(1);
+	}
+
+	val = *(uint32_t *)&reg[r];
+	old_neg_bit = val & 020000000000;
+
+	if (src_val & 040) {
+		src_val = ~src_val;
+		src_val &= 077;
+
+		val >>= src_val;
+		flag.C = val & 01;
+		val >>= 1;
+	} else {
+		src_val &= 077;
+
+		val <<= src_val - 1;
+		flag.C = ((val & 020000000000) != 0);
+		val <<= 1;
+	}
+	*(uint32_t *)&reg[r] = val;
+
+	neg_bit = val & 020000000000;
+
+	flag.N = (neg_bit != 0);
+	flag.Z = (val == 0);
 	flag.V = (neg_bit != old_neg_bit);
 }
 
