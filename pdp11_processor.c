@@ -84,6 +84,12 @@ instruction_t ins[] = {
 	{ 0177777, 0000240, "nop", p_nop },
 
 	/* CONDITION CODE OPERATORS */
+
+	{ 0177777, 0000241, "clc", p_clc },
+	{ 0177777, 0000242, "clv", p_clv },
+	{ 0177777, 0000244, "clz", p_clz },
+	{ 0177777, 0000250, "cln", p_cln },
+	{ 0177777, 0000257, "ccc", p_ccc },
 };
 
 static uint16_t reg[8];
@@ -825,6 +831,31 @@ void p_sob(void)
 
 void p_nop(void)
 {
+}
+
+void p_clc(void)
+{
+	flag.C = 0;
+}
+
+void p_clv(void)
+{
+	flag.V = 0;
+}
+
+void p_clz(void)
+{
+	flag.Z = 0;
+}
+
+void p_cln(void)
+{
+	flag.N = 0;
+}
+
+void p_ccc(void)
+{
+	flag.N = flag.Z = flag.V = flag.C = 0;
 }
 
 void run(void)

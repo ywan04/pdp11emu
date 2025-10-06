@@ -66,4 +66,12 @@ void p_sob(void);
 void p_halt(void);
 void p_nop(void);
 
+/* CONDITION CODE OPERATORS */
+
+void p_clc(void);
+void p_clv(void);
+void p_clz(void);
+void p_cln(void);
+void p_ccc(void);
+
 #endif // PDP11_PROCESSOR__H
