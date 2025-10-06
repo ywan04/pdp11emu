@@ -90,6 +90,12 @@ instruction_t ins[] = {
 	{ 0177777, 0000244, "clz", p_clz },
 	{ 0177777, 0000250, "cln", p_cln },
 	{ 0177777, 0000257, "ccc", p_ccc },
+
+	{ 0177777, 0000261, "sec", p_sec },
+	{ 0177777, 0000262, "sev", p_sev },
+	{ 0177777, 0000264, "sez", p_sez },
+	{ 0177777, 0000270, "sen", p_sen },
+	{ 0177777, 0000277, "scc", p_scc },
 };
 
 static uint16_t reg[8];
@@ -856,6 +862,31 @@ void p_cln(void)
 void p_ccc(void)
 {
 	flag.N = flag.Z = flag.V = flag.C = 0;
+}
+
+void p_sec(void)
+{
+	flag.C = 1;
+}
+
+void p_sev(void)
+{
+	flag.V = 1;
+}
+
+void p_sez(void)
+{
+	flag.Z = 1;
+}
+
+void p_sen(void)
+{
+	flag.N = 1;
+}
+
+void p_scc(void)
+{
+	flag.N = flag.Z = flag.V = flag.C = 1;
 }
 
 void run(void)

@@ -74,4 +74,10 @@ void p_clz(void);
 void p_cln(void);
 void p_ccc(void);
 
+void p_sec(void);
+void p_sev(void);
+void p_sez(void);
+void p_sen(void);
+void p_scc(void);
+
 #endif // PDP11_PROCESSOR__H
