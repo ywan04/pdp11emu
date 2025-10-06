@@ -85,17 +85,7 @@ instruction_t ins[] = {
 
 	/* CONDITION CODE OPERATORS */
 
-	{ 0177777, 0000241, "clc", p_clc },
-	{ 0177777, 0000242, "clv", p_clv },
-	{ 0177777, 0000244, "clz", p_clz },
-	{ 0177777, 0000250, "cln", p_cln },
-	{ 0177777, 0000257, "ccc", p_ccc },
-
-	{ 0177777, 0000261, "sec", p_sec },
-	{ 0177777, 0000262, "sev", p_sev },
-	{ 0177777, 0000264, "sez", p_sez },
-	{ 0177777, 0000270, "sen", p_sen },
-	{ 0177777, 0000277, "scc", p_scc },
+	{ 0177740, 0000240, "", p_cco },
 };
 
 static uint16_t reg[8];
@@ -839,54 +829,36 @@ void p_nop(void)
 {
 }
 
-void p_clc(void)
+void p_cco(void)
 {
-	flag.C = 0;
-}
+	uint16_t xx;
+	uint8_t setv;
 
-void p_clv(void)
-{
-	flag.V = 0;
-}
+	xx = curins & 037;
 
-void p_clz(void)
-{
-	flag.Z = 0;
-}
+	setv = ((xx & 020) != 0);
 
-void p_cln(void)
-{
-	flag.N = 0;
-}
+	if (setv)
+		trace("set flags: ");
+	else
+		trace("clear flags: ");
 
-void p_ccc(void)
-{
-	flag.N = flag.Z = flag.V = flag.C = 0;
-}
-
-void p_sec(void)
-{
-	flag.C = 1;
-}
-
-void p_sev(void)
-{
-	flag.V = 1;
-}
-
-void p_sez(void)
-{
-	flag.Z = 1;
-}
-
-void p_sen(void)
-{
-	flag.N = 1;
-}
-
-void p_scc(void)
-{
-	flag.N = flag.Z = flag.V = flag.C = 1;
+	if (xx & 010) {
+		flag.N = setv;
+		trace("N");
+	}
+	if (xx & 004) {
+		flag.Z = setv;
+		trace("Z");
+	}
+	if (xx & 002) {
+		flag.V = setv;
+		trace("V");
+	}
+	if (xx & 001) {
+		flag.C = setv;
+		trace("C");
+	}
 }
 
 void run(void)
@@ -904,7 +876,10 @@ void run(void)
 		     i < n;
 		     ++i) {
 			if ((curins & ins[i].mask) == ins[i].opcode) {
+				trace(ins[i].name);
 				ins[i].exec();
+				trace("\n");
+				break;
 			}
 		}
 	}

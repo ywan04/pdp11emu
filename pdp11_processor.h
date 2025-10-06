@@ -68,16 +68,6 @@ void p_nop(void);
 
 /* CONDITION CODE OPERATORS */
 
-void p_clc(void);
-void p_clv(void);
-void p_clz(void);
-void p_cln(void);
-void p_ccc(void);
-
-void p_sec(void);
-void p_sev(void);
-void p_sez(void);
-void p_sen(void);
-void p_scc(void);
+void p_cco(void);
 
 #endif // PDP11_PROCESSOR__H
