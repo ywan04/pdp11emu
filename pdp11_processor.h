@@ -48,6 +48,7 @@ void p_xor(void);
 /* BRANCH */
 
 /* Branches */
+void p_br(void);
 /* Signed Conditional Branches */
 /* Unsigned Conditional Branches */
 

@@ -65,6 +65,7 @@ instruction_t ins[] = {
 	/* BRANCH */
 
 	/* Branches */
+	{ 0177400, 0000400, "br", p_br },
 	/* Signed Conditional Branches */
 	/* Unsigned Conditional Branches */
 
@@ -763,6 +764,21 @@ void p_xor(void)
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = 0;
+}
+
+void p_br(void)
+{
+	uint16_t offset;
+
+	offset = curins & 0377;
+
+	if (offset & 0200) {
+		offset = ~offset;
+		offset += 1;
+		offset &= 0377;
+	}
+
+	PC += 2 * offset;
 }
 
 void p_jmp(void)
