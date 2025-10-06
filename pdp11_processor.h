@@ -56,6 +56,7 @@ void p_xor(void);
 void p_jmp(void);
 void p_jsr(void);
 void p_rts(void);
+void p_mark(void);
 void p_sob(void);
 
 /* TRAP & INTERRUPT */

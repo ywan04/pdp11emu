@@ -73,6 +73,7 @@ instruction_t ins[] = {
 	{ 0177700, 0000100, "jmp", p_jmp },
 	{ 0177000, 0004000, "jsr", p_jsr },
 	{ 0177770, 0000020, "rts", p_rts },
+	{ 0177700, 0006400, "mark", p_mark },
 	{ 0177000, 0077000, "sob", p_sob },
 
 	/* TRAP & INTERRUPT */
@@ -795,6 +796,18 @@ void p_rts(void)
 	PC = reg[r];
 	reg[r] = readw(SP);
 	SP +=2;
+}
+
+void p_mark(void)
+{
+	uint16_t nn;
+
+	nn = curins & 077;
+
+	SP += 2 * nn;
+	PC = reg[5];
+	reg[5] = readw(SP);
+	SP += 2;
 }
 
 void p_sob(void)
