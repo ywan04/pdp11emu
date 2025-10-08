@@ -784,74 +784,26 @@ void p_br(void)
 
 void p_bne(void)
 {
-	uint16_t offset;
-
-	if (flag.Z)
-		return;
-
-	offset = curins & 0377;
-
-	if (offset & 0200) {
-		offset = ~offset;
-		offset += 1;
-		offset &= 0377;
-	}
-
-	PC += 2 * offset;
+	if (!flag.Z)
+		p_br();
 }
 
 void p_beq(void)
 {
-	uint16_t offset;
-
-	if (!flag.Z)
-		return;
-
-	offset = curins & 0377;
-
-	if (offset & 0200) {
-		offset = ~offset;
-		offset += 1;
-		offset &= 0377;
-	}
-
-	PC += 2 * offset;
+	if (flag.Z)
+		p_br();
 }
 
 void p_bpl(void)
 {
-	uint16_t offset;
-
-	if (flag.N)
-		return;
-
-	offset = curins & 0377;
-
-	if (offset & 0200) {
-		offset = ~offset;
-		offset += 1;
-		offset &= 0377;
-	}
-
-	PC += 2 * offset;
+	if (!flag.N)
+		p_br();
 }
 
 void p_bmi(void)
 {
-	uint16_t offset;
-
-	if (!flag.N)
-		return;
-
-	offset = curins & 0377;
-
-	if (offset & 0200) {
-		offset = ~offset;
-		offset += 1;
-		offset &= 0377;
-	}
-
-	PC += 2 * offset;
+	if (flag.N)
+		p_br();
 }
 
 void p_jmp(void)
