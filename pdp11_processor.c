@@ -66,6 +66,8 @@ instruction_t ins[] = {
 
 	/* Branches */
 	{ 0177400, 0000400, "br", p_br },
+	{ 0177400, 0001000, "bne", p_bne },
+	{ 0177400, 0001000, "beq", p_beq },
 	/* Signed Conditional Branches */
 	/* Unsigned Conditional Branches */
 
@@ -769,6 +771,42 @@ void p_xor(void)
 void p_br(void)
 {
 	uint16_t offset;
+
+	offset = curins & 0377;
+
+	if (offset & 0200) {
+		offset = ~offset;
+		offset += 1;
+		offset &= 0377;
+	}
+
+	PC += 2 * offset;
+}
+
+void p_bne(void)
+{
+	uint16_t offset;
+
+	if (flag.Z)
+		return;
+
+	offset = curins & 0377;
+
+	if (offset & 0200) {
+		offset = ~offset;
+		offset += 1;
+		offset &= 0377;
+	}
+
+	PC += 2 * offset;
+}
+
+void p_beq(void)
+{
+	uint16_t offset;
+
+	if (!flag.Z)
+		return;
 
 	offset = curins & 0377;
 
