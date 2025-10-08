@@ -53,6 +53,8 @@ void p_bne(void);
 void p_beq(void);
 void p_bpl(void);
 void p_bmi(void);
+void p_bvc(void);
+void p_bvs(void);
 /* Signed Conditional Branches */
 /* Unsigned Conditional Branches */
 

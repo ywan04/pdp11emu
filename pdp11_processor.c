@@ -70,6 +70,8 @@ instruction_t ins[] = {
 	{ 0177400, 0001400, "beq", p_beq },
 	{ 0177400, 0100000, "bpl", p_bpl },
 	{ 0177400, 0100400, "bmi", p_bmi },
+	{ 0177400, 0102000, "bvc", p_bvc },
+	{ 0177400, 0102400, "bvs", p_bvs },
 	/* JUMP & SUBROUTINE */
 
 	{ 0177700, 0000100, "jmp", p_jmp },
@@ -803,6 +805,18 @@ void p_bpl(void)
 void p_bmi(void)
 {
 	if (flag.N)
+		p_br();
+}
+
+void p_bvc(void)
+{
+	if (!flag.V)
+		p_br();
+}
+
+void p_bvs(void)
+{
+	if (flag.V)
 		p_br();
 }
 
