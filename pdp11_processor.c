@@ -74,6 +74,10 @@ instruction_t ins[] = {
 	{ 0177400, 0102400, "bvs", p_bvs },
 	{ 0177400, 0103000, "bcc", p_bcc },
 	{ 0177400, 0103400, "bcs", p_bcs },
+	/* Signed Conditional Branches */
+	{ 0177400, 0002000, "bge", p_bge },
+	/* Unsigned Conditional Branches */
+
 	/* JUMP & SUBROUTINE */
 
 	{ 0177700, 0000100, "jmp", p_jmp },
@@ -831,6 +835,12 @@ void p_bcc(void)
 void p_bcs(void)
 {
 	if (flag.C)
+		p_br();
+}
+
+void p_bge(void)
+{
+	if ((flag.N ^ flag.V) == 0)
 		p_br();
 }
 
