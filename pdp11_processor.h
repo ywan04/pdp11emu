@@ -51,6 +51,8 @@ void p_xor(void);
 void p_br(void);
 void p_bne(void);
 void p_beq(void);
+void p_bpl(void);
+void p_bmi(void);
 /* Signed Conditional Branches */
 /* Unsigned Conditional Branches */
 

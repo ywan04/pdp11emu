@@ -67,10 +67,9 @@ instruction_t ins[] = {
 	/* Branches */
 	{ 0177400, 0000400, "br", p_br },
 	{ 0177400, 0001000, "bne", p_bne },
-	{ 0177400, 0001000, "beq", p_beq },
-	/* Signed Conditional Branches */
-	/* Unsigned Conditional Branches */
-
+	{ 0177400, 0001400, "beq", p_beq },
+	{ 0177400, 0100000, "bpl", p_bpl },
+	{ 0177400, 0100400, "bmi", p_bmi },
 	/* JUMP & SUBROUTINE */
 
 	{ 0177700, 0000100, "jmp", p_jmp },
@@ -806,6 +805,42 @@ void p_beq(void)
 	uint16_t offset;
 
 	if (!flag.Z)
+		return;
+
+	offset = curins & 0377;
+
+	if (offset & 0200) {
+		offset = ~offset;
+		offset += 1;
+		offset &= 0377;
+	}
+
+	PC += 2 * offset;
+}
+
+void p_bpl(void)
+{
+	uint16_t offset;
+
+	if (flag.N)
+		return;
+
+	offset = curins & 0377;
+
+	if (offset & 0200) {
+		offset = ~offset;
+		offset += 1;
+		offset &= 0377;
+	}
+
+	PC += 2 * offset;
+}
+
+void p_bmi(void)
+{
+	uint16_t offset;
+
+	if (!flag.N)
 		return;
 
 	offset = curins & 0377;
