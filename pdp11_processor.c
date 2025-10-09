@@ -77,6 +77,7 @@ instruction_t ins[] = {
 	/* Signed Conditional Branches */
 	{ 0177400, 0002000, "bge", p_bge },
 	{ 0177400, 0002400, "blt", p_blt },
+	{ 0177400, 0003000, "bgt", p_bgt },
 	/* Unsigned Conditional Branches */
 
 	/* JUMP & SUBROUTINE */
@@ -848,6 +849,12 @@ void p_bge(void)
 void p_blt(void)
 {
 	if ((flag.N ^ flag.V) == 1)
+		p_br();
+}
+
+void p_bgt(void)
+{
+	if ((flag.Z | (flag.N ^ flag.V)) == 0)
 		p_br();
 }
 

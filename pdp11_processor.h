@@ -60,6 +60,7 @@ void p_bcs(void);
 /* Signed Conditional Branches */
 void p_bge(void);
 void p_blt(void);
+void p_bgt(void);
 /* Unsigned Conditional Branches */
 
 /* JUMP & SUBROUTINE */
