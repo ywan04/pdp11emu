@@ -72,8 +72,8 @@ instruction_t ins[] = {
 	{ 0177400, 0100400, "bmi", p_bmi },
 	{ 0177400, 0102000, "bvc", p_bvc },
 	{ 0177400, 0102400, "bvs", p_bvs },
-	{ 0177400, 0103000, "bcc", p_bcc },
-	{ 0177400, 0103400, "bcs", p_bcs },
+	{ 0177400, 0103000, "bcc/bhis", p_bcc },
+	{ 0177400, 0103400, "bcs/blo", p_bcs },
 	/* Signed Conditional Branches */
 	{ 0177400, 0002000, "bge", p_bge },
 	{ 0177400, 0002400, "blt", p_blt },
