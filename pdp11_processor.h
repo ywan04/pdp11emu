@@ -64,6 +64,7 @@ void p_bgt(void);
 void p_ble(void);
 /* Unsigned Conditional Branches */
 void p_bhi(void);
+void p_blo(void);
 
 /* JUMP & SUBROUTINE */
 
