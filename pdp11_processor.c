@@ -109,7 +109,7 @@ static uint16_t curins;
 /*
  * Returns 1 if src is register and 0 otherwise
  */
-uint8_t parse_arg(uint16_t *adr, uint8_t arg)
+uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 {
 	uint8_t mod, regn;
 	
@@ -125,14 +125,14 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg)
 		return 0;
 	case 2:
 		*adr = reg[regn];
-		reg[regn] += 2;
+		reg[regn] += (regn >= 6) ? 2 : incv;
 		return 0;
 	case 3:
 		*adr = readw(reg[regn]);
 		reg[regn] += 2;
 		return 0;
 	case 4:
-		reg[regn] -= 2;
+		reg[regn] -= (regn >= 6) ? 2 : incv;
 		*adr = reg[regn];
 		return 0;
 	case 5:
@@ -159,7 +159,7 @@ uint8_t get_src(uint16_t *adr)
 
 	ss = (uint8_t)(curins & 0000077);
 
-	return parse_arg(adr, ss);
+	return parse_arg(adr, ss, 2);
 }
 
 uint8_t get_dst(uint16_t *adr)
@@ -168,7 +168,25 @@ uint8_t get_dst(uint16_t *adr)
 	
 	dd = (uint8_t)((curins & 0007700) >> 6);
 
-	return parse_arg(adr, dd);
+	return parse_arg(adr, dd, 2);
+}
+
+uint8_t get_srcb(uint16_t *adr)
+{
+	uint8_t ss;
+
+	ss = (uint8_t)(curins & 0000077);
+
+	return parse_arg(adr, ss, 1);
+}
+
+uint8_t get_dstb(uint16_t *adr)
+{
+	uint8_t dd;
+	
+	dd = (uint8_t)((curins & 0007700) >> 6);
+
+	return parse_arg(adr, dd, 1);
 }
 
 void p_clr(void)
