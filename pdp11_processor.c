@@ -28,6 +28,7 @@ instruction_t ins[] = {
 
 	/* General */
 	{ 0177700, 0005000, "clr", p_clr },
+	{ 0177700, 0105000, "clrb", p_clrb },
 	{ 0177700, 0005100, "com", p_com },
 	{ 0177700, 0005200, "inc", p_inc },
 	{ 0177700, 0005300, "dec", p_dec },
@@ -197,6 +198,20 @@ void p_clr(void)
 		reg[dst_adr] = 0;
 	} else {
 		writew(dst_adr, 0);
+	}
+
+	flag.N = flag.V = flag.C = 0;
+	flag.Z = 1;
+}
+
+void p_clrb(void)
+{
+	uint16_t dst_adr;
+	
+	if (get_dstb(&dst_adr)) {
+		((uint8_t *)&reg[dst_adr])[0] = 0;
+	} else {
+		writeb(dst_adr, 0);
 	}
 
 	flag.N = flag.V = flag.C = 0;
