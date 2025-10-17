@@ -32,6 +32,7 @@ instruction_t ins[] = {
 	{ 0177700, 0005100, "com", p_com },
 	{ 0177700, 0105100, "comb", p_comb },
 	{ 0177700, 0005200, "inc", p_inc },
+	{ 0177700, 0005200, "incb", p_incb },
 	{ 0177700, 0005300, "dec", p_dec },
 	{ 0177700, 0005400, "neg", p_neg },
 	{ 0177700, 0005700, "tst", p_tst },
@@ -271,6 +272,23 @@ void p_inc(void)
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = (val == 0100000);
+}
+
+void p_incb(void)
+{
+	uint16_t dst_adr;
+	uint8_t val;
+
+	if (get_dst(&dst_adr)) {
+		val = ((uint8_t *)&reg[dst_adr])[0] += 1;
+	} else {
+		val = readb(dst_adr) + 1;
+		writeb(dst_adr, val);
+	}
+
+	flag.N = ((val & 0200) != 0);
+	flag.Z = (val == 0);
+	flag.V = (val == 0200);
 }
 
 void p_dec(void)
