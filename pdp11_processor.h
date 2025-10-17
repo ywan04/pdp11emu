@@ -13,6 +13,7 @@ void run(void);
 void p_clr(void);
 void p_clrb(void);
 void p_com(void);
+void p_comb(void);
 void p_inc(void);
 void p_dec(void);
 void p_neg(void);

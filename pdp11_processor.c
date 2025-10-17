@@ -30,6 +30,7 @@ instruction_t ins[] = {
 	{ 0177700, 0005000, "clr", p_clr },
 	{ 0177700, 0105000, "clrb", p_clrb },
 	{ 0177700, 0005100, "com", p_com },
+	{ 0177700, 0105100, "comb", p_comb },
 	{ 0177700, 0005200, "inc", p_inc },
 	{ 0177700, 0005300, "dec", p_dec },
 	{ 0177700, 0005400, "neg", p_neg },
@@ -193,7 +194,7 @@ uint8_t get_dstb(uint16_t *adr)
 void p_clr(void)
 {
 	uint16_t dst_adr;
-	
+
 	if (get_dst(&dst_adr)) {
 		reg[dst_adr] = 0;
 	} else {
@@ -207,7 +208,7 @@ void p_clr(void)
 void p_clrb(void)
 {
 	uint16_t dst_adr;
-	
+
 	if (get_dstb(&dst_adr)) {
 		((uint8_t *)&reg[dst_adr])[0] = 0;
 	} else {
@@ -231,6 +232,25 @@ void p_com(void)
 	}
 
 	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = 0;
+	flag.C = 1;
+}
+
+void p_comb(void)
+{
+	uint16_t dst_adr;
+	uint8_t val;
+	
+	if (get_dstb(&dst_adr)) {
+		val = ~((uint8_t *)&reg[dst_adr])[0];
+		((uint8_t *)&reg[dst_adr])[0] = val;
+	} else {
+		val = ~readb(dst_adr);
+		writeb(dst_adr, val);
+	}
+
+	flag.N = ((val & 0200) != 0);
 	flag.Z = (val == 0);
 	flag.V = 0;
 	flag.C = 1;
