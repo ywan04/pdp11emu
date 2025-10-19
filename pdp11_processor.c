@@ -36,6 +36,7 @@ instruction_t ins[] = {
 	{ 0177700, 0005300, "dec", p_dec },
 	{ 0177700, 0105300, "decb", p_decb },
 	{ 0177700, 0005400, "neg", p_neg },
+	{ 0177700, 0105400, "negb", p_negb },
 	{ 0177700, 0005700, "tst", p_tst },
 	/* Rotate & Shift */
 	{ 0177700, 0006000, "ror", p_ror },
@@ -341,6 +342,25 @@ void p_neg(void)
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = (val == 0100000);
+	flag.C = !flag.Z;
+}
+
+void p_negb(void)
+{
+	uint16_t dst_adr;
+	uint8_t val;
+
+	if (get_dstb(&dst_adr)) {
+		val = ~((uint8_t *)&reg[dst_adr])[0] + 1;
+		((uint8_t *)&reg[dst_adr])[0] = val;
+	} else {
+		val = ~readb(dst_adr) + 1;
+		writeb(dst_adr, val);
+	}
+
+	flag.N = ((val & 0200) != 0);
+	flag.Z = (val == 0);
+	flag.V = (val == 0200);
 	flag.C = !flag.Z;
 }
 

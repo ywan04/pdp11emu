@@ -19,6 +19,7 @@ void p_incb(void);
 void p_dec(void);
 void p_decb(void);
 void p_neg(void);
+void p_negb(void);
 void p_tst(void);
 /* Rotate & Shift */
 void p_ror(void);
