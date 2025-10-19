@@ -38,6 +38,7 @@ instruction_t ins[] = {
 	{ 0177700, 0005400, "neg", p_neg },
 	{ 0177700, 0105400, "negb", p_negb },
 	{ 0177700, 0005700, "tst", p_tst },
+	{ 0177700, 0105700, "tstb", p_tstb },
 	/* Rotate & Shift */
 	{ 0177700, 0006000, "ror", p_ror },
 	{ 0177700, 0006100, "rol", p_rol },
@@ -372,6 +373,18 @@ void p_tst(void)
 	val = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
 
 	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = flag.C = 0;
+}
+
+void p_tstb(void)
+{
+	uint16_t dst_adr;
+	uint8_t val;
+	
+	val = (get_dstb(&dst_adr)) ? (uint8_t)reg[dst_adr] : readb(dst_adr);
+
+	flag.N = ((val & 0200) != 0);
 	flag.Z = (val == 0);
 	flag.V = flag.C = 0;
 }
