@@ -26,6 +26,7 @@ void p_tstb(void);
 void p_ror(void);
 void p_rorb(void);
 void p_rol(void);
+void p_rolb(void);
 void p_asr(void);
 void p_asl(void);
 void p_swab(void);
