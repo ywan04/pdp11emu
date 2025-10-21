@@ -24,6 +24,7 @@ void p_tst(void);
 void p_tstb(void);
 /* Rotate & Shift */
 void p_ror(void);
+void p_rorb(void);
 void p_rol(void);
 void p_asr(void);
 void p_asl(void);
