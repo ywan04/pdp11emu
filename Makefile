@@ -3,7 +3,7 @@
 
 include config.mk
 
-SRC = main.c debug.c pdp11_memory.c pdp11_processor.c
+SRC = main.c debug.c system.c pdp11_memory.c pdp11_processor.c
 OBJ = ${SRC:.c=.o}
 
 all: pdp11emu

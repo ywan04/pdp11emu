@@ -1,6 +1,7 @@
 #include "pdp11_processor.h"
 #include "pdp11_memory.h"
 #include "debug.h"
+#include "system.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -156,7 +157,7 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		PC += 2;
 		return 0;
 	default:
-		trace("error: mod cannot be larger than 7\n");
+		system_exit("error: mod cannot be larger than 7\n", SYSTEM_ERROR);
 		return 2;
 	}
 }
@@ -632,9 +633,8 @@ void p_sxt(void)
 
 void p_halt(void)
 {
-	trace("halt.\n");
-
-	exit(0);
+	PC -= 2;
+	/*exit(0);*/
 }
 
 void p_mov(void)
@@ -1134,25 +1134,25 @@ void p_cco(void)
 	setv = ((xx & 020) != 0);
 
 	if (setv)
-		trace("set flags: ");
+		debug_print("set flags: ");
 	else
-		trace("clear flags: ");
+		debug_print("clear flags: ");
 
 	if (xx & 010) {
 		flag.N = setv;
-		trace("N");
+		debug_print("N");
 	}
 	if (xx & 004) {
 		flag.Z = setv;
-		trace("Z");
+		debug_print("Z");
 	}
 	if (xx & 002) {
 		flag.V = setv;
-		trace("V");
+		debug_print("V");
 	}
 	if (xx & 001) {
 		flag.C = setv;
-		trace("C");
+		debug_print("C");
 	}
 }
 
@@ -1164,16 +1164,18 @@ void run(void)
 
 	for (;;) {
 		curins = readw(PC);
-		trace("%06o %06o: ", PC, curins);
+		debug_print_regs(reg);
+		debug_print_init();
+		debug_print("%06o %06o: ", PC, curins);
 		PC += 2;
 
 		for (i = 0, n = sizeof(ins)/sizeof(instruction_t);
 		     i < n;
 		     ++i) {
 			if ((curins & ins[i].mask) == ins[i].opcode) {
-				trace(ins[i].name);
+				debug_print(ins[i].name);
 				ins[i].exec();
-				trace("\n");
+				debug_refresh();
 				break;
 			}
 		}

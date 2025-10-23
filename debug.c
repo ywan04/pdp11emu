@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <stdint.h>
 
 static WINDOW *win;
 
@@ -17,8 +16,8 @@ void debug_create(void)
 	}
 	
 	win = newwin(DEBUG_HEIGHT, DEBUG_WIDTH, DEBUG_Y, DEBUG_X);
-	box(debug, 0, 0);
-	mvwprintw(debug, 0, 2, "debug");
+	box(win, 0, 0);
+	mvwprintw(win, 0, 2, "debug");
 }
 
 void debug_destroy(void)
@@ -44,10 +43,10 @@ void debug_print_regs(uint16_t *reg)
 	int i;
 
 	for (i = 0; i < 8; i += 2) {
-		mvwprintw(win, i+2, (DEBUG_WIDTH-2*(4+6))/3, "R%d: %06o");
+		mvwprintw(win, i/2+2, (DEBUG_WIDTH-2*(4+6))/3, "R%d: %06o", i, reg[i]);
 	}
 	for (i = 1; i < 8; i += 2) {
-		mvwprintw(win, i+2, 2*(DEBUG_WIDTH-(4+6))/3, "R%d: %06o");
+		mvwprintw(win, i/2+2, (2*DEBUG_WIDTH-(4+6))/3, "R%d: %06o", i, reg[i]);
 	}
 }
 
@@ -58,9 +57,16 @@ void debug_print_init(void)
 
 void debug_print(const char *format, ...)
 {
+	char str[128];
 	va_list args;
-	
+
 	va_start(args, format);
-	wvprintw(win, format, args);
+	vsnprintf(str, 128, format, args);
+	wprintw(win, str);
 	va_end(args);
+}
+
+void debug_refresh(void)
+{
+	wrefresh(win);
 }
