@@ -9,12 +9,12 @@
 
 void system_exit(const char *str, int err)
 {
-	fprintf(stderr, str);
-
 	terminal_system_destroy();
 	debug_system_destroy();
 
 	endwin();
+
+	fprintf(stderr, str);
 
 	exit(err);
 }
