@@ -14,4 +14,4 @@ void debug_print_regs(uint16_t *reg);
 void debug_print_init(void);
 void debug_print(void);
 
-#endif // DEBUG__H
+#endif /* DEBUG__H */
