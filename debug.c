@@ -50,7 +50,7 @@ void debug_print_regs(uint16_t *reg)
 
 void debug_print_init(void)
 {
-	wmove(win, DEBUG_HEIGHT-3, 7);
+	wmove(win, DEBUG_HEIGHT-4, 5);
 }
 
 void debug_print(const char *format, ...)

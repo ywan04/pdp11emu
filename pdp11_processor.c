@@ -1184,6 +1184,7 @@ void run(void)
 		}
 
 		if (quit) {
+			terminal_refresh();
 			terminal_getch();
 			break;
 		}
