@@ -30,12 +30,10 @@ void debug_destroy(void)
 	}
 }
 
-void debug_silent_destroy(void)
+void debug_system_destroy(void)
 {
-	if (win != NULL) {
+	if (win != NULL)
 		delwin(win);
-		win = NULL;
-	}
 }
 
 void debug_print_regs(uint16_t *reg)

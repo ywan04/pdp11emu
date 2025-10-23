@@ -11,7 +11,7 @@
 
 void debug_create(void);
 void debug_destroy(void);
-void debug_silent_destroy(void);
+void debug_system_destroy(void);
 void debug_print_regs(uint16_t *reg);
 void debug_print_init(void);
 void debug_print(const char *format, ...);

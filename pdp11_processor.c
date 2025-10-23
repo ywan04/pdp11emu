@@ -1,7 +1,10 @@
 #include "pdp11_processor.h"
 #include "pdp11_memory.h"
 #include "debug.h"
+#include "terminal.h"
 #include "system.h"
+
+#include <ncurses.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -114,6 +117,7 @@ instruction_t ins[] = {
 
 static uint16_t reg[8];
 static uint16_t curins;
+static uint8_t quit;
 
 /*
  * Returns 1 if src is register and 0 otherwise
@@ -633,8 +637,7 @@ void p_sxt(void)
 
 void p_halt(void)
 {
-	PC -= 2;
-	/*exit(0);*/
+	quit = 1;
 }
 
 void p_mov(void)
@@ -1178,6 +1181,11 @@ void run(void)
 				debug_refresh();
 				break;
 			}
+		}
+
+		if (quit) {
+			terminal_getch();
+			break;
 		}
 	}
 }

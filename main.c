@@ -2,6 +2,7 @@
 #include "pdp11_processor.h"
 
 #include "debug.h"
+#include "terminal.h"
 
 #include <ncurses.h>
 
@@ -12,12 +13,14 @@ int main(int argc, char *argv[])
 	initscr();
 
 	debug_create();
+	terminal_create();
 
 	//loadfile(argv[1]);
 	run();
 
-	getch();
+	terminal_destroy();
 	debug_destroy();
+
 	endwin();
 
 	return 0;
