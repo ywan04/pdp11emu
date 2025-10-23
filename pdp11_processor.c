@@ -974,6 +974,7 @@ void p_br(void)
 		offset = ~offset;
 		offset += 1;
 		offset &= 0377;
+		offset = -offset;
 	}
 
 	PC += 2 * offset;
