@@ -31,14 +31,13 @@ void loadfile(const char *filename)
 {
 	FILE *f;
 	uint16_t adr, n, i;
-	uint8_t b;
 
 	f = fopen(filename, "r");
 
-	fscanf(f, "%hx", &adr);
-	fscanf(f, "%hx", &n);
-	for (i = 0; i < n; ++i) {
-		fscanf(f, "%hhx", &b);
-		writeb(adr+i, b);
+	fscanf(f, "%hu", &i);
+
+	while (i--) {
+		fscanf(f, "%ho %ho\n", &adr, &n);
+		writew(adr, n);
 	}
 }

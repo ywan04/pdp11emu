@@ -15,7 +15,9 @@ int main(int argc, char *argv[])
 	debug_create();
 	terminal_create();
 
-	//loadfile(argv[1]);
+	if (argc == 2) {
+		loadfile(argv[1]);
+	}
 	run();
 
 	terminal_destroy();
