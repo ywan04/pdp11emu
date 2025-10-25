@@ -51,6 +51,7 @@ instruction_t ins[] = {
 	{ 0177700, 0006200, "asr", p_asr },
 	{ 0177700, 0106200, "asrb", p_asrb },
 	{ 0177700, 0006300, "asl", p_asl },
+	{ 0177700, 0106300, "aslb", p_aslb },
 	{ 0177700, 0000300, "swab", p_swab },
 	/* Multiple Precision */
 	{ 0177700, 0005500, "adc", p_adc },
@@ -544,7 +545,7 @@ void p_asrb(void)
 	int8_t val;
 
 	val = (dst_is_reg = get_dst(&dst_adr))
-		? (uint8_t)reg[dst_adr] : readb(dst_adr);
+		? (int8_t)reg[dst_adr] : readb(dst_adr);
 
 	new_c = val & 01;
 	val >>= 1;
@@ -581,6 +582,31 @@ void p_asl(void)
 	}
 
 	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = flag.N ^ new_c;
+	flag.C = new_c;
+}
+
+void p_aslb(void)
+{
+	uint16_t dst_adr;
+	uint8_t dst_is_reg;
+	uint16_t new_c;
+	int8_t val;
+
+	val = (dst_is_reg = get_dst(&dst_adr))
+		? (int8_t)reg[dst_adr] : readb(dst_adr);
+
+	new_c = (val & 0200) >> 7;
+	val <<= 1;
+
+	if (dst_is_reg) {
+		((uint8_t *)&reg[dst_adr])[0] = val;
+	} else {
+		writeb(dst_adr, val);
+	}
+
+	flag.N = ((val & 0200) != 0);
 	flag.Z = (val == 0);
 	flag.V = flag.N ^ new_c;
 	flag.C = new_c;

@@ -30,6 +30,7 @@ void p_rolb(void);
 void p_asr(void);
 void p_asrb(void);
 void p_asl(void);
+void p_aslb(void);
 void p_swab(void);
 /* Multiple Precision */
 void p_adc(void);
