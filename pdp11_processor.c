@@ -57,6 +57,7 @@ instruction_t ins[] = {
 	{ 0177700, 0005500, "adc", p_adc },
 	{ 0177700, 0105500, "adcb", p_adcb },
 	{ 0177700, 0005600, "sbc", p_sbc },
+	{ 0177700, 0105600, "sbcb", p_sbcb },
 	{ 0177700, 0006700, "sxt", p_sxt },
 
 	/* DOUBLE OPERAND */
@@ -690,6 +691,25 @@ void p_sbc(void)
 	flag.Z = (val == 0);
 	flag.V = (val == 0077777 && flag.C);
 	flag.C = (val == 0177777 && flag.C);
+}
+
+void p_sbcb(void)
+{
+	uint16_t dst_adr;
+	uint8_t val;
+
+	if (get_dstb(&dst_adr)) {
+		((uint8_t *)&reg[dst_adr])[0] -= flag.C;
+		val = ((uint8_t *)&reg[dst_adr])[0];
+	} else {
+		val = readb(dst_adr) - flag.C;
+		writeb(dst_adr, val);
+	}
+
+	flag.N = ((val & 0200) != 0);
+	flag.Z = (val == 0);
+	flag.V = (val == 0177 && flag.C);
+	flag.C = (val == 0377 && flag.C);
 }
 
 void p_sxt(void)
