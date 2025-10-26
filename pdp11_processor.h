@@ -34,6 +34,7 @@ void p_aslb(void);
 void p_swab(void);
 /* Multiple Precision */
 void p_adc(void);
+void p_adcb(void);
 void p_sbc(void);
 void p_sxt(void);
 

@@ -55,6 +55,7 @@ instruction_t ins[] = {
 	{ 0177700, 0000300, "swab", p_swab },
 	/* Multiple Precision */
 	{ 0177700, 0005500, "adc", p_adc },
+	{ 0177700, 0105500, "adcb", p_adcb },
 	{ 0177700, 0005600, "sbc", p_sbc },
 	{ 0177700, 0006700, "sxt", p_sxt },
 
@@ -651,6 +652,25 @@ void p_adc(void)
 	flag.N = ((val & 0100000) != 0);
 	flag.Z = (val == 0);
 	flag.V = (val == 0100000 && flag.C);
+	flag.C = (flag.Z && flag.C);
+}
+
+void p_adcb(void)
+{
+	uint16_t dst_adr;
+	uint8_t val;
+
+	if (get_dstb(&dst_adr)) {
+		((uint8_t *)&reg[dst_adr])[0] += flag.C;
+		val = ((uint8_t *)&reg[dst_adr])[0];
+	} else {
+		val = readb(dst_adr) + flag.C;
+		writeb(dst_adr, val);
+	}
+
+	flag.N = ((val & 0200) != 0);
+	flag.Z = (val == 0);
+	flag.V = (val == 0200 && flag.C);
 	flag.C = (flag.Z && flag.C);
 }
 
