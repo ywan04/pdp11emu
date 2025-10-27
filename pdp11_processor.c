@@ -66,6 +66,7 @@ instruction_t ins[] = {
 	{ 0170000, 0010000, "mov", p_mov },
 	{ 0170000, 0110000, "movb", p_movb },	
 	{ 0170000, 0020000, "cmp", p_cmp },
+	{ 0170000, 0120000, "cmpb", p_cmpb },
 	{ 0170000, 0060000, "add", p_add },
 	{ 0170000, 0160000, "sub", p_sub },
 	/* Logical */
@@ -782,6 +783,28 @@ void p_cmp(void)
 	neg_bit = val & 0100000;
 	src_neg_bit = src_val & 0100000;
 	dst_neg_bit = dst_val & 0100000;
+
+	flag.N = (neg_bit != 0);
+	flag.Z = (val == 0);
+	flag.V = (src_neg_bit != dst_neg_bit)
+		&& (dst_neg_bit == neg_bit);
+	flag.C = (dst_val > src_val);
+}
+
+void p_cmpb(void)
+{
+	uint16_t src_adr, dst_adr;
+	uint8_t src_val, dst_val, val;
+	uint8_t neg_bit, src_neg_bit, dst_neg_bit;
+
+	src_val = (get_src(&src_adr)) ? (uint8_t)reg[src_adr] : readb(src_adr);
+	dst_val = (get_dst(&dst_adr)) ? (uint8_t)reg[dst_adr] : readb(dst_adr);
+
+	val = src_val - dst_val;
+
+	neg_bit = val & 0200;
+	src_neg_bit = src_val & 0200;
+	dst_neg_bit = dst_val & 0200;
 
 	flag.N = (neg_bit != 0);
 	flag.Z = (val == 0);

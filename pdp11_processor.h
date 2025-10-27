@@ -45,6 +45,7 @@ void p_sxt(void);
 void p_mov(void);
 void p_movb(void);
 void p_cmp(void);
+void p_cmpb(void);
 void p_add(void);
 void p_sub(void);
 /* Logical */
