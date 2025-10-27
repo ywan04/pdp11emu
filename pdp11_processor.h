@@ -43,6 +43,7 @@ void p_sxt(void);
 	
 /* General */
 void p_mov(void);
+void p_movb(void);
 void p_cmp(void);
 void p_add(void);
 void p_sub(void);

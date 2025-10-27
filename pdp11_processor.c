@@ -64,6 +64,7 @@ instruction_t ins[] = {
 
 	/* General */
 	{ 0170000, 0010000, "mov", p_mov },
+	{ 0170000, 0110000, "movb", p_movb },	
 	{ 0170000, 0020000, "cmp", p_cmp },
 	{ 0170000, 0060000, "add", p_add },
 	{ 0170000, 0160000, "sub", p_sub },
@@ -745,6 +746,24 @@ void p_mov(void)
 	}
 
 	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = 0;
+}
+
+void p_movb(void)
+{
+	uint16_t src_adr, dst_adr;
+	uint8_t val;
+
+	val = (get_src(&src_adr)) ? (uint8_t)reg[src_adr] : readb(src_adr);
+
+	if (get_dst(&dst_adr)) {
+		reg[dst_adr] = (int8_t)val;
+	} else {
+		writeb(dst_adr, val);
+	}
+
+	flag.N = ((val & 0200) != 0);
 	flag.Z = (val == 0);
 	flag.V = 0;
 }
