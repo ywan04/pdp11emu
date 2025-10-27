@@ -52,15 +52,17 @@ void terminal_putchar(char c)
 	waddch(win, c);
 
 	++x;
-	if (x >= TERMINAL_WIDTH) {
+	if (x >= TERMINAL_WIDTH-1) {
 		x = 1;
 		++y;
-		if (y >= TERMINAL_HEIGHT) {
+		if (y >= TERMINAL_HEIGHT-1) {
 			terminal_clear();
 			y = 1;
 		}
 		wmove(win, y, x);
 	}
+
+	wrefresh(win);
 }
 
 char terminal_getchar(void)

@@ -1365,7 +1365,7 @@ void run(void)
 	
 	PC = 01000;
 
-	writew(0177564, 0000200); /* XCSR: transmitter reaady */
+	writew(0177564, 0000200); /* XCSR: transmitter ready */
 
 	for (;;) {
 		curins = readw(PC);
