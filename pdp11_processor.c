@@ -1361,8 +1361,11 @@ void p_cco(void)
 void run(void)
 {
 	uint8_t i, n;
+	uint16_t xbuf;
 	
 	PC = 01000;
+
+	writew(0177564, 0000200); /* XCSR: transmitter reaady */
 
 	for (;;) {
 		curins = readw(PC);
@@ -1380,6 +1383,11 @@ void run(void)
 				debug_refresh();
 				break;
 			}
+		}
+
+		if ((xbuf = readw(0177566)) != 0) {
+			terminal_putchar(xbuf);
+			writew(0177566, 0);
 		}
 
 		if (quit) {
