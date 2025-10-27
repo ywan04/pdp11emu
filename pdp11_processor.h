@@ -52,6 +52,7 @@ void p_sub(void);
 void p_bit(void);
 void p_bitb(void);
 void p_bic(void);
+void p_bicb(void);
 void p_bis(void);
 /* Register */
 void p_mul(void);

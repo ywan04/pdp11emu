@@ -73,6 +73,7 @@ instruction_t ins[] = {
 	{ 0170000, 0030000, "bit", p_bit },
 	{ 0170000, 0130000, "bitb", p_bitb },
 	{ 0170000, 0040000, "bic", p_bic },
+	{ 0170000, 0140000, "bicb", p_bicb },
 	{ 0170000, 0050000, "bis", p_bis },
 	/* Register */
 	{ 0177000, 0070000, "mul", p_mul },
@@ -926,6 +927,29 @@ void p_bic(void)
 	}
 
 	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = 0;
+}
+
+void p_bicb(void)
+{
+	uint16_t src_adr, dst_adr;
+	uint16_t src_val, dst_val, val;
+	uint8_t dst_is_reg;
+
+	src_val = (get_srcb(&src_adr)) ? (uint8_t)reg[src_adr] : readb(src_adr);
+	dst_val = (dst_is_reg = get_dstb(&dst_adr))
+		? (uint8_t)reg[dst_adr] : readb(dst_adr);
+
+	val = ~src_val & dst_val;
+
+	if (dst_is_reg) {
+		((uint8_t *)&reg[dst_adr])[0] = val;
+	} else {
+		writeb(dst_adr, val);
+	}
+
+	flag.N = ((val & 0200) != 0);
 	flag.Z = (val == 0);
 	flag.V = 0;
 }
