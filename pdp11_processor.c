@@ -1362,10 +1362,11 @@ void run(void)
 {
 	uint8_t i, n;
 	uint16_t xbuf;
+	int rbuf;
 	
 	PC = 01000;
 
-	writew(0177564, 0000200); /* XCSR: transmitter ready */
+	writew(A_XCSR, 0000200); /* XCSR: transmitter ready */
 
 	for (;;) {
 		curins = readw(PC);
@@ -1385,9 +1386,18 @@ void run(void)
 			}
 		}
 
-		if ((xbuf = readw(0177566)) != 0) {
+		if ((xbuf = readw(A_XBUF)) != 0) {
 			terminal_putchar(xbuf);
-			writew(0177566, 0);
+			writew(A_XBUF, 0);
+		}
+
+		if (rbuf_readed()) {
+			writew(A_RCSR, 0000000);
+		}
+
+		if ((rbuf = terminal_getchar()) != TERMINAL_NOCH) {
+			writew(A_RBUF, rbuf);
+			writew(A_RCSR, 0000200);
 		}
 
 		if (quit) {
