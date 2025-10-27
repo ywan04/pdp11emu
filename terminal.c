@@ -7,6 +7,7 @@
 #include <stdarg.h>
 
 static WINDOW *win;
+static int y, x;
 
 void terminal_create(void)
 {
@@ -18,7 +19,9 @@ void terminal_create(void)
 	win = newwin(TERMINAL_HEIGHT, TERMINAL_WIDTH, TERMINAL_Y, TERMINAL_X);
 	box(win, 0, 0);
 	mvwprintw(win, 0, 2, "terminal");
-	wmove(win, 1, 1);
+	y = x = 1;
+	wmove(win, y, x);
+	nodelay(win, TRUE);
 	wrefresh(win);
 }
 
@@ -40,16 +43,36 @@ void terminal_system_destroy(void)
 
 void terminal_clear(void)
 {
+	terminal_destroy();
+	terminal_create();
 }
 
 void terminal_putchar(char c)
 {
 	waddch(win, c);
+
+	++x;
+	if (x >= TERMINAL_WIDTH) {
+		x = 1;
+		++y;
+		if (y >= TERMINAL_HEIGHT) {
+			terminal_clear();
+			y = 1;
+		}
+		wmove(win, y, x);
+	}
+}
+
+char terminal_getchar(void)
+{
+	return wgetch(win);
 }
 
 void terminal_getch(void)
 {
+	nodelay(win, FALSE);
 	wgetch(win);
+	nodelay(win, TRUE);
 }
 
 void terminal_refresh(void)
