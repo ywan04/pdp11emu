@@ -42,7 +42,6 @@ uint8_t readb(uint16_t adr)
 void writew(uint16_t adr, uint16_t w)
 {
 	mem_addressing(adr);
-
 	memory.words[adr/2] = w;
 }
 

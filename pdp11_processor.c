@@ -1391,13 +1391,14 @@ void run(void)
 			writew(A_XBUF, 0);
 		}
 
-		if (rbuf_readed()) {
-			writew(A_RCSR, 0000000);
-		}
-
 		if ((rbuf = terminal_getchar()) != TERMINAL_NOCH) {
 			writew(A_RBUF, rbuf);
+			rbuf_readed();
 			writew(A_RCSR, 0000200);
+		}
+
+		if (rbuf_readed()) {
+			writew(A_RCSR, 0000000);
 		}
 
 		if (quit) {
