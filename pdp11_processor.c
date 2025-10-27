@@ -71,6 +71,7 @@ instruction_t ins[] = {
 	{ 0170000, 0160000, "sub", p_sub },
 	/* Logical */
 	{ 0170000, 0030000, "bit", p_bit },
+	{ 0170000, 0130000, "bitb", p_bitb },
 	{ 0170000, 0040000, "bic", p_bic },
 	{ 0170000, 0050000, "bis", p_bis },
 	/* Register */
@@ -756,9 +757,9 @@ void p_movb(void)
 	uint16_t src_adr, dst_adr;
 	uint8_t val;
 
-	val = (get_src(&src_adr)) ? (uint8_t)reg[src_adr] : readb(src_adr);
+	val = (get_srcb(&src_adr)) ? (uint8_t)reg[src_adr] : readb(src_adr);
 
-	if (get_dst(&dst_adr)) {
+	if (get_dstb(&dst_adr)) {
 		reg[dst_adr] = (int8_t)val;
 	} else {
 		writeb(dst_adr, val);
@@ -797,8 +798,8 @@ void p_cmpb(void)
 	uint8_t src_val, dst_val, val;
 	uint8_t neg_bit, src_neg_bit, dst_neg_bit;
 
-	src_val = (get_src(&src_adr)) ? (uint8_t)reg[src_adr] : readb(src_adr);
-	dst_val = (get_dst(&dst_adr)) ? (uint8_t)reg[dst_adr] : readb(dst_adr);
+	src_val = (get_srcb(&src_adr)) ? (uint8_t)reg[src_adr] : readb(src_adr);
+	dst_val = (get_dstb(&dst_adr)) ? (uint8_t)reg[dst_adr] : readb(dst_adr);
 
 	val = src_val - dst_val;
 
@@ -886,6 +887,21 @@ void p_bit(void)
 	val = src_val & dst_val;
 
 	flag.N = ((val & 0100000) != 0);
+	flag.Z = (val == 0);
+	flag.V = 0;
+}
+
+void p_bitb(void)
+{
+	uint16_t src_adr, dst_adr;
+	uint8_t src_val, dst_val, val;
+
+	src_val = (get_srcb(&src_adr)) ? (uint8_t)reg[src_adr] : readb(src_adr);
+	dst_val = (get_dstb(&dst_adr)) ? (uint8_t)reg[dst_adr] : readb(dst_adr);
+
+	val = src_val & dst_val;
+
+	flag.N = ((val & 0200) != 0);
 	flag.Z = (val == 0);
 	flag.V = 0;
 }

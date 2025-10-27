@@ -50,6 +50,7 @@ void p_add(void);
 void p_sub(void);
 /* Logical */
 void p_bit(void);
+void p_bitb(void);
 void p_bic(void);
 void p_bis(void);
 /* Register */
