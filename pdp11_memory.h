@@ -11,6 +11,7 @@
 #define A_XBUF 0177566
 
 char rbuf_readed(void);
+void mem_addressing(uint16_t adr);
 void writeb(uint16_t adr, uint8_t b);
 uint8_t readb(uint16_t adr);
 void writew(uint16_t adr, uint16_t w);

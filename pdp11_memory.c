@@ -19,28 +19,36 @@ char rbuf_readed(void)
 	return 0;
 }
 
+void mem_addressing(uint16_t adr)
+{
+	if (adr == A_RBUF)
+		rbuf_r = 1;
+}
+
 void writeb(uint16_t adr, uint8_t b)
 {
+	mem_addressing(adr);
+
 	memory.bytes[adr] = b;
 }
 
 uint8_t readb(uint16_t adr)
 {
-	if (adr == A_RBUF)
-		rbuf_r = 1;
+	mem_addressing(adr);
 
 	return memory.bytes[adr];
 }
 
 void writew(uint16_t adr, uint16_t w)
 {
+	mem_addressing(adr);
+
 	memory.words[adr/2] = w;
 }
 
 uint16_t readw(uint16_t adr)
 {
-	if (adr == A_RBUF)
-		rbuf_r = 1;
+	mem_addressing(adr);
 
 	return memory.words[adr/2];
 }
