@@ -93,6 +93,8 @@ void p_sob(void);
 
 /* TRAP & INTERRUPT */
 
+void p_emt(void);
+
 /* MISCELLANEOUS */
 
 void p_halt(void);

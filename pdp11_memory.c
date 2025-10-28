@@ -9,6 +9,11 @@ static union {
 
 static char rbuf_r;
 
+void *get_low_psw(void)
+{
+	return &memory.bytes[A_PSW+1];
+}
+
 char rbuf_readed(void)
 {
 	if (rbuf_r) {
@@ -42,6 +47,7 @@ uint8_t readb(uint16_t adr)
 void writew(uint16_t adr, uint16_t w)
 {
 	mem_addressing(adr);
+
 	memory.words[adr/2] = w;
 }
 

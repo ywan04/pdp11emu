@@ -13,11 +13,13 @@
 #define SP reg[6]
 
 struct {
+	uint8_t P : 3;
+	uint8_t T : 1;
 	uint8_t N : 1;
 	uint8_t Z : 1;
 	uint8_t V : 1;
 	uint8_t C : 1;
-} flag;
+} *flag;
 
 typedef struct {
 	uint16_t mask;
@@ -113,6 +115,8 @@ instruction_t ins[] = {
 	{ 0177000, 0077000, "sob", p_sob },
 
 	/* TRAP & INTERRUPT */
+
+	{ 0177400, 0104000, "emt", p_emt },
 
 	/* MISCELLANEOUS */
 
@@ -221,8 +225,8 @@ void p_clr(void)
 		writew(dst_adr, 0);
 	}
 
-	flag.N = flag.V = flag.C = 0;
-	flag.Z = 1;
+	flag->N = flag->V = flag->C = 0;
+	flag->Z = 1;
 }
 
 void p_clrb(void)
@@ -235,8 +239,8 @@ void p_clrb(void)
 		writeb(dst_adr, 0);
 	}
 
-	flag.N = flag.V = flag.C = 0;
-	flag.Z = 1;
+	flag->N = flag->V = flag->C = 0;
+	flag->Z = 1;
 }
 
 void p_com(void)
@@ -251,10 +255,10 @@ void p_com(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
-	flag.C = 1;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
+	flag->C = 1;
 }
 
 void p_comb(void)
@@ -270,10 +274,10 @@ void p_comb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
-	flag.C = 1;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
+	flag->C = 1;
 }
 
 void p_inc(void)
@@ -288,9 +292,9 @@ void p_inc(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0100000);
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0100000);
 }
 
 void p_incb(void)
@@ -305,9 +309,9 @@ void p_incb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0200);
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0200);
 }
 
 void p_dec(void)
@@ -322,9 +326,9 @@ void p_dec(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0077777);
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0077777);
 }
 
 void p_decb(void)
@@ -339,9 +343,9 @@ void p_decb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0177);
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0177);
 }
 
 void p_neg(void)
@@ -356,10 +360,10 @@ void p_neg(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0100000);
-	flag.C = !flag.Z;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0100000);
+	flag->C = !flag->Z;
 }
 
 void p_negb(void)
@@ -375,10 +379,10 @@ void p_negb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0200);
-	flag.C = !flag.Z;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0200);
+	flag->C = !flag->Z;
 }
 
 void p_tst(void)
@@ -388,9 +392,9 @@ void p_tst(void)
 	
 	val = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = flag.C = 0;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = flag->C = 0;
 }
 
 void p_tstb(void)
@@ -400,9 +404,9 @@ void p_tstb(void)
 	
 	val = (get_dstb(&dst_adr)) ? (uint8_t)reg[dst_adr] : readb(dst_adr);
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = flag.C = 0;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = flag->C = 0;
 }
 
 void p_ror(void)
@@ -418,7 +422,7 @@ void p_ror(void)
 	
 	new_c = val & 01;
 	val >>= 1;
-	if (flag.C) {
+	if (flag->C) {
 		val |= 0100000;
 	}
 
@@ -428,10 +432,10 @@ void p_ror(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = (new_c != flag.C);
-	flag.C = new_c;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = (new_c != flag->C);
+	flag->C = new_c;
 }
 
 void p_rorb(void)
@@ -447,7 +451,7 @@ void p_rorb(void)
 	
 	new_c = val & 01;
 	val >>= 1;
-	if (flag.C) {
+	if (flag->C) {
 		val |= 0200;
 	}
 
@@ -457,10 +461,10 @@ void p_rorb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = (new_c != flag.C);
-	flag.C = new_c;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = (new_c != flag->C);
+	flag->C = new_c;
 }
 
 void p_rol(void)
@@ -475,7 +479,7 @@ void p_rol(void)
 
 	new_c = (val & 0100000) >> 15;
 	val <<= 1;
-	if (flag.C) {
+	if (flag->C) {
 		val |= 01;
 	}
 
@@ -485,10 +489,10 @@ void p_rol(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = (new_c != flag.C);
-	flag.C = new_c;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = (new_c != flag->C);
+	flag->C = new_c;
 }
 
 void p_rolb(void)
@@ -503,7 +507,7 @@ void p_rolb(void)
 
 	new_c = (val & 0200) >> 7;
 	val <<= 1;
-	if (flag.C) {
+	if (flag->C) {
 		val |= 01;
 	}
 
@@ -513,10 +517,10 @@ void p_rolb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = (new_c != flag.C);
-	flag.C = new_c;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = (new_c != flag->C);
+	flag->C = new_c;
 }
 
 void p_asr(void)
@@ -538,10 +542,10 @@ void p_asr(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = flag.N ^ new_c;
-	flag.C = new_c;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = flag->N ^ new_c;
+	flag->C = new_c;
 }
 
 void p_asrb(void)
@@ -563,10 +567,10 @@ void p_asrb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = flag.N ^ new_c;
-	flag.C = new_c;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = flag->N ^ new_c;
+	flag->C = new_c;
 }
 
 void p_asl(void)
@@ -588,10 +592,10 @@ void p_asl(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = flag.N ^ new_c;
-	flag.C = new_c;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = flag->N ^ new_c;
+	flag->C = new_c;
 }
 
 void p_aslb(void)
@@ -613,10 +617,10 @@ void p_aslb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = flag.N ^ new_c;
-	flag.C = new_c;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = flag->N ^ new_c;
+	flag->C = new_c;
 }
 
 void p_swab(void)
@@ -638,9 +642,9 @@ void p_swab(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((((uint8_t *)&val)[1] & 0200) != 0);
-	flag.Z = (((uint8_t *)&val)[1] == 0);
-	flag.V = flag.C = 0;
+	flag->N = ((((uint8_t *)&val)[1] & 0200) != 0);
+	flag->Z = (((uint8_t *)&val)[1] == 0);
+	flag->V = flag->C = 0;
 }
 
 void p_adc(void)
@@ -649,16 +653,16 @@ void p_adc(void)
 	uint16_t val;
 
 	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr] += flag.C;
+		val = reg[dst_adr] += flag->C;
 	} else {
-		val = readw(dst_adr) + flag.C;
+		val = readw(dst_adr) + flag->C;
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0100000 && flag.C);
-	flag.C = (flag.Z && flag.C);
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0100000 && flag->C);
+	flag->C = (flag->Z && flag->C);
 }
 
 void p_adcb(void)
@@ -667,17 +671,17 @@ void p_adcb(void)
 	uint8_t val;
 
 	if (get_dstb(&dst_adr)) {
-		((uint8_t *)&reg[dst_adr])[0] += flag.C;
+		((uint8_t *)&reg[dst_adr])[0] += flag->C;
 		val = ((uint8_t *)&reg[dst_adr])[0];
 	} else {
-		val = readb(dst_adr) + flag.C;
+		val = readb(dst_adr) + flag->C;
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0200 && flag.C);
-	flag.C = (flag.Z && flag.C);
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0200 && flag->C);
+	flag->C = (flag->Z && flag->C);
 }
 
 void p_sbc(void)
@@ -686,16 +690,16 @@ void p_sbc(void)
 	uint16_t val;
 
 	if (get_dst(&dst_adr)) {
-		val = reg[dst_adr] -= flag.C;
+		val = reg[dst_adr] -= flag->C;
 	} else {
-		val = readw(dst_adr) - flag.C;
+		val = readw(dst_adr) - flag->C;
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0077777 && flag.C);
-	flag.C = (val == 0177777 && flag.C);
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0077777 && flag->C);
+	flag->C = (val == 0177777 && flag->C);
 }
 
 void p_sbcb(void)
@@ -704,17 +708,17 @@ void p_sbcb(void)
 	uint8_t val;
 
 	if (get_dstb(&dst_adr)) {
-		((uint8_t *)&reg[dst_adr])[0] -= flag.C;
+		((uint8_t *)&reg[dst_adr])[0] -= flag->C;
 		val = ((uint8_t *)&reg[dst_adr])[0];
 	} else {
-		val = readb(dst_adr) - flag.C;
+		val = readb(dst_adr) - flag->C;
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = (val == 0177 && flag.C);
-	flag.C = (val == 0377 && flag.C);
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = (val == 0177 && flag->C);
+	flag->C = (val == 0377 && flag->C);
 }
 
 void p_sxt(void)
@@ -722,14 +726,14 @@ void p_sxt(void)
 	uint16_t dst_adr;
 	uint16_t val;
 
-	val = (flag.N) ? 0177777 : 0;
+	val = (flag->N) ? 0177777 : 0;
 	if (get_dst(&dst_adr)) {
 		reg[dst_adr] = val;
 	} else {
 		writew(dst_adr, val);
 	}
 
-	flag.Z = (val == 0);
+	flag->Z = (val == 0);
 }
 
 void p_halt(void)
@@ -749,9 +753,9 @@ void p_mov(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
 }
 
 void p_movb(void)
@@ -767,9 +771,9 @@ void p_movb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
 }
 
 void p_cmp(void)
@@ -787,11 +791,11 @@ void p_cmp(void)
 	src_neg_bit = src_val & 0100000;
 	dst_neg_bit = dst_val & 0100000;
 
-	flag.N = (neg_bit != 0);
-	flag.Z = (val == 0);
-	flag.V = (src_neg_bit != dst_neg_bit)
+	flag->N = (neg_bit != 0);
+	flag->Z = (val == 0);
+	flag->V = (src_neg_bit != dst_neg_bit)
 		&& (dst_neg_bit == neg_bit);
-	flag.C = (dst_val > src_val);
+	flag->C = (dst_val > src_val);
 }
 
 void p_cmpb(void)
@@ -809,11 +813,11 @@ void p_cmpb(void)
 	src_neg_bit = src_val & 0200;
 	dst_neg_bit = dst_val & 0200;
 
-	flag.N = (neg_bit != 0);
-	flag.Z = (val == 0);
-	flag.V = (src_neg_bit != dst_neg_bit)
+	flag->N = (neg_bit != 0);
+	flag->Z = (val == 0);
+	flag->V = (src_neg_bit != dst_neg_bit)
 		&& (dst_neg_bit == neg_bit);
-	flag.C = (dst_val > src_val);
+	flag->C = (dst_val > src_val);
 }
 
 void p_add(void)
@@ -840,11 +844,11 @@ void p_add(void)
 	src_neg_bit = src_val & 0100000;
 	dst_neg_bit = dst_val & 0100000;
 
-	flag.N = (neg_bit != 0);
-	flag.Z = (val == 0);
-	flag.V = (src_neg_bit == dst_neg_bit)
+	flag->N = (neg_bit != 0);
+	flag->Z = (val == 0);
+	flag->V = (src_neg_bit == dst_neg_bit)
 		&& (dst_neg_bit != neg_bit);
-	flag.C = (val < dst_val);
+	flag->C = (val < dst_val);
 }
 
 void p_sub(void)
@@ -871,11 +875,11 @@ void p_sub(void)
 	src_neg_bit = src_val & 0100000;
 	dst_neg_bit = dst_val & 0100000;
 
-	flag.N = (neg_bit != 0);
-	flag.Z = (val == 0);
-	flag.V = (src_neg_bit != dst_neg_bit)
+	flag->N = (neg_bit != 0);
+	flag->Z = (val == 0);
+	flag->V = (src_neg_bit != dst_neg_bit)
 		&& (src_neg_bit == neg_bit);
-	flag.C = (src_val > dst_val);
+	flag->C = (src_val > dst_val);
 }
 
 void p_bit(void)
@@ -888,9 +892,9 @@ void p_bit(void)
 
 	val = src_val & dst_val;
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
 }
 
 void p_bitb(void)
@@ -903,9 +907,9 @@ void p_bitb(void)
 
 	val = src_val & dst_val;
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
 }
 
 void p_bic(void)
@@ -927,9 +931,9 @@ void p_bic(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
 }
 
 void p_bicb(void)
@@ -950,9 +954,9 @@ void p_bicb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
 }
 
 void p_bis(void)
@@ -974,9 +978,9 @@ void p_bis(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
 }
 
 void p_bisb(void)
@@ -997,9 +1001,9 @@ void p_bisb(void)
 		writeb(dst_adr, val);
 	}
 
-	flag.N = ((val & 0200) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
+	flag->N = ((val & 0200) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
 }
 
 void p_mul(void)
@@ -1017,17 +1021,17 @@ void p_mul(void)
 	if (r % 2) {
 		reg[r] = val;
 
-		flag.Z = (reg[r] == 0);
-		flag.C = (val != reg[r]);
+		flag->Z = (reg[r] == 0);
+		flag->C = (val != reg[r]);
 	} else {
 		*(uint32_t *)&reg[r] = val;
 
-		flag.Z = (val == 0);
-		flag.C = (val != reg[r+1]);
+		flag->Z = (val == 0);
+		flag->C = (val != reg[r+1]);
 	}
 
-	flag.N = ((reg[r] & 0100000) != 0);
-	flag.V = 0;
+	flag->N = ((reg[r] & 0100000) != 0);
+	flag->V = 0;
 }
 
 void p_div(void)
@@ -1045,23 +1049,23 @@ void p_div(void)
 		exit(1);
 	}
 
-	flag.V = flag.C = 1;
+	flag->V = flag->C = 1;
 	if (src_val != 0) {
 		val = *(uint32_t *)&reg[r] / src_val;
 		rem = *(uint32_t *)&reg[r] % src_val;
 
 		if (abs(reg[r]) <= abs(src_val)) {
-			flag.V = 0;
+			flag->V = 0;
 		}
 
 		reg[r] = val;
 		reg[r+1] = rem;
 
-		flag.C = 0;
+		flag->C = 0;
 	}
 	
-	flag.N = ((reg[r] & 0100000) != 0);
-	flag.Z = (reg[r] == 0);
+	flag->N = ((reg[r] & 0100000) != 0);
+	flag->Z = (reg[r] == 0);
 }
 
 void p_ash(void)
@@ -1080,21 +1084,21 @@ void p_ash(void)
 		src_val &= 077;
 
 		reg[r] >>= src_val;
-		flag.C = reg[r] & 01;
+		flag->C = reg[r] & 01;
 		reg[r] >>= 1;
 	} else {
 		src_val &= 077;
 
 		reg[r] <<= src_val - 1;
-		flag.C = ((reg[r] & 0100000) != 0);
+		flag->C = ((reg[r] & 0100000) != 0);
 		reg[r] <<= 1;
 	}
 
 	neg_bit = reg[r] & 0100000;
 
-	flag.N = (neg_bit != 0);
-	flag.Z = (reg[r] == 0);
-	flag.V = (neg_bit != old_neg_bit);
+	flag->N = (neg_bit != 0);
+	flag->Z = (reg[r] == 0);
+	flag->V = (neg_bit != old_neg_bit);
 }
 
 void p_ashc(void)
@@ -1120,22 +1124,22 @@ void p_ashc(void)
 		src_val &= 077;
 
 		val >>= src_val;
-		flag.C = val & 01;
+		flag->C = val & 01;
 		val >>= 1;
 	} else {
 		src_val &= 077;
 
 		val <<= src_val - 1;
-		flag.C = ((val & 020000000000) != 0);
+		flag->C = ((val & 020000000000) != 0);
 		val <<= 1;
 	}
 	*(uint32_t *)&reg[r] = val;
 
 	neg_bit = val & 020000000000;
 
-	flag.N = (neg_bit != 0);
-	flag.Z = (val == 0);
-	flag.V = (neg_bit != old_neg_bit);
+	flag->N = (neg_bit != 0);
+	flag->Z = (val == 0);
+	flag->V = (neg_bit != old_neg_bit);
 }
 
 void p_xor(void)
@@ -1157,9 +1161,9 @@ void p_xor(void)
 		writew(dst_adr, val);
 	}
 
-	flag.N = ((val & 0100000) != 0);
-	flag.Z = (val == 0);
-	flag.V = 0;
+	flag->N = ((val & 0100000) != 0);
+	flag->Z = (val == 0);
+	flag->V = 0;
 }
 
 void p_br(void)
@@ -1180,85 +1184,85 @@ void p_br(void)
 
 void p_bne(void)
 {
-	if (!flag.Z)
+	if (!flag->Z)
 		p_br();
 }
 
 void p_beq(void)
 {
-	if (flag.Z)
+	if (flag->Z)
 		p_br();
 }
 
 void p_bpl(void)
 {
-	if (!flag.N)
+	if (!flag->N)
 		p_br();
 }
 
 void p_bmi(void)
 {
-	if (flag.N)
+	if (flag->N)
 		p_br();
 }
 
 void p_bvc(void)
 {
-	if (!flag.V)
+	if (!flag->V)
 		p_br();
 }
 
 void p_bvs(void)
 {
-	if (flag.V)
+	if (flag->V)
 		p_br();
 }
 
 void p_bcc(void)
 {
-	if (!flag.C)
+	if (!flag->C)
 		p_br();
 }
 
 void p_bcs(void)
 {
-	if (flag.C)
+	if (flag->C)
 		p_br();
 }
 
 void p_bge(void)
 {
-	if ((flag.N ^ flag.V) == 0)
+	if ((flag->N ^ flag->V) == 0)
 		p_br();
 }
 
 void p_blt(void)
 {
-	if ((flag.N ^ flag.V) == 1)
+	if ((flag->N ^ flag->V) == 1)
 		p_br();
 }
 
 void p_bgt(void)
 {
-	if ((flag.Z | (flag.N ^ flag.V)) == 0)
+	if ((flag->Z | (flag->N ^ flag->V)) == 0)
 		p_br();
 }
 
 void p_ble(void)
 {
-	if ((flag.Z | (flag.N ^ flag.V)) == 1)
+	if ((flag->Z | (flag->N ^ flag->V)) == 1)
 		p_br();
 }
 
 void p_bhi(void)
 {
-	if ((flag.C | flag.Z) == 0)
+	if ((flag->C | flag->Z) == 0)
 		p_br();
 }
 
 void p_blo(void)
 {
-	if ((flag.C | flag.Z) == 1)
+	if ((flag->C | flag->Z) == 1)
 		p_br();
 }
 
@@ -1322,6 +1326,15 @@ void p_sob(void)
 		PC -= 2 * nn;
 }
 
+void p_emt(void)
+{
+	writew(SP -= 2, readw(A_PSW));
+	writew(SP -= 2, PC);
+
+	PC = readw(030);
+	writew(A_PSW, readw(032));
+}
+
 void p_nop(void)
 {
 }
@@ -1341,19 +1354,19 @@ void p_cco(void)
 		debug_print("clear flags: ");
 
 	if (xx & 010) {
-		flag.N = setv;
+		flag->N = setv;
 		debug_print("N");
 	}
 	if (xx & 004) {
-		flag.Z = setv;
+		flag->Z = setv;
 		debug_print("Z");
 	}
 	if (xx & 002) {
-		flag.V = setv;
+		flag->V = setv;
 		debug_print("V");
 	}
 	if (xx & 001) {
-		flag.C = setv;
+		flag->C = setv;
 		debug_print("C");
 	}
 }
@@ -1367,6 +1380,7 @@ void run(void)
 	PC = 01000;
 
 	writew(A_XCSR, 0000200); /* XCSR: transmitter ready */
+	flag = get_low_psw();
 
 	for (;;) {
 		curins = readw(PC);

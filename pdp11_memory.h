@@ -5,11 +5,14 @@
 
 #define MEMSIZE (64*1024) // 64KB
 
+#define A_PSW  0177776
+
 #define A_RCSR 0177560
 #define A_RBUF 0177562
 #define A_XCSR 0177564
 #define A_XBUF 0177566
 
+void *get_low_psw(void);
 char rbuf_readed(void);
 void mem_addressing(uint16_t adr);
 void writeb(uint16_t adr, uint8_t b);
