@@ -94,6 +94,7 @@ void p_sob(void);
 /* TRAP & INTERRUPT */
 
 void p_emt(void);
+void p_trap(void);
 
 /* MISCELLANEOUS */
 

@@ -117,6 +117,7 @@ instruction_t ins[] = {
 	/* TRAP & INTERRUPT */
 
 	{ 0177400, 0104000, "emt", p_emt },
+	{ 0177400, 0104400, "trap", p_trap },
 
 	/* MISCELLANEOUS */
 
@@ -1333,6 +1334,15 @@ void p_emt(void)
 
 	PC = readw(030);
 	writew(A_PSW, readw(032));
+}
+
+void p_trap(void)
+{
+	writew(SP -= 2, readw(A_PSW));
+	writew(SP -= 2, PC);
+
+	PC = readw(034);
+	writew(A_PSW, readw(036));
 }
 
 void p_nop(void)
