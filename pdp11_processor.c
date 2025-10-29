@@ -1285,8 +1285,7 @@ void p_jsr(void)
 
 	r = (curins & 0000700) >> 6;
 
-	SP -= 2;
-	writew(SP, reg[r]);
+	writew(SP -= 2, reg[r]);
 	reg[r] = PC;
 	PC = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
 }
@@ -1343,6 +1342,15 @@ void p_trap(void)
 
 	PC = readw(034);
 	writew(A_PSW, readw(036));
+}
+
+void p_bpt(void)
+{
+	writew(SP -= 2, readw(A_PSW));
+	writew(SP -= 2, PC);
+
+	PC = readw(014);
+	writew(A_PSW, readw(016));
 }
 
 void p_nop(void)
