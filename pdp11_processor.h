@@ -98,6 +98,7 @@ void p_trap(void);
 void p_bpt(void);
 void p_iot(void);
 void p_rti(void);
+void p_rtt(void);
 
 /* MISCELLANEOUS */
 
