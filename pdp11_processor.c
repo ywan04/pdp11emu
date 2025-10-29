@@ -120,6 +120,7 @@ instruction_t ins[] = {
 	{ 0177400, 0104400, "trap", p_trap },
 	{ 0177777, 0000003, "bpt", p_bpt },
 	{ 0177777, 0000004, "iot", p_iot },
+	{ 0177777, 0000002, "rti", p_rti },
 
 	/* MISCELLANEOUS */
 
@@ -1362,6 +1363,13 @@ void p_iot(void)
 
 	PC = readw(020);
 	writew(A_PSW, readw(022));
+}
+
+void p_rti(void)
+{
+	PC = readw(SP);
+	writew(A_PSW, readw(SP += 2));
+	SP += 2;
 }
 
 void p_nop(void)
