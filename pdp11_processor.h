@@ -95,6 +95,8 @@ void p_sob(void);
 
 void p_emt(void);
 void p_trap(void);
+void p_bpt(void);
+void p_iot(void);
 
 /* MISCELLANEOUS */
 
