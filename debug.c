@@ -50,6 +50,13 @@ void debug_print_regs(uint16_t *reg)
 
 void debug_print_init(void)
 {
+	int i;
+
+	wmove(win, DEBUG_HEIGHT-4, 5);
+
+	for (i = 5; i < DEBUG_WIDTH-1; ++i)
+		waddch(win, ' ');
+
 	wmove(win, DEBUG_HEIGHT-4, 5);
 }
 

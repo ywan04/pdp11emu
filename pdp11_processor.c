@@ -145,39 +145,58 @@ static uint8_t quit;
 uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 {
 	uint8_t mod, regn;
+	uint16_t x;
 	
 	mod  = arg >> 3;
 	regn = arg & 07;
 
 	switch (mod) {
 	case 0:
+		debug_print("r%d", regn);
+
 		*adr = regn;
 		return 1;
 	case 1:
+		debug_print("(r%d)", regn);
+
 		*adr = reg[regn];
 		return 0;
 	case 2:
+		debug_print("(r%d)+", regn);
+
 		*adr = reg[regn];
 		reg[regn] += (regn >= 6) ? 2 : incv;
 		return 0;
 	case 3:
+		debug_print("@(r%d)+", regn);
+
 		*adr = readw(reg[regn]);
 		reg[regn] += 2;
 		return 0;
 	case 4:
+		debug_print("-(r%d)", regn);
+
 		reg[regn] -= (regn >= 6) ? 2 : incv;
 		*adr = reg[regn];
 		return 0;
 	case 5:
+		debug_print("@-(r%d)", regn);
+
 		reg[regn] -= 2;
 		*adr = readw(reg[regn]);
 		return 0;
 	case 6:
-		*adr = reg[regn] + readw(PC);
+		x = readw(PC);
+		debug_print("%d(r%d)", x, regn);
+
+		*adr = reg[regn] + x;
 		PC += 2;
 		return 0;
 	case 7:
-		*adr = readw(reg[regn] + readw(PC));
+		x = readw(PC);
+		debug_print("@%d(r%d)", x, regn);
+
+		*adr = readw(reg[regn] + x);
 		PC += 2;
 		return 0;
 	default:
@@ -189,10 +208,14 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 uint8_t get_src(uint16_t *adr)
 {
 	uint8_t ss;
+	uint8_t is_reg;
 
 	ss = (uint8_t)((curins & 0007700) >> 6);
 
-	return parse_arg(adr, ss, 2);
+	is_reg = parse_arg(adr, ss, 2);
+	debug_print(", ");
+
+	return is_reg;
 }
 
 uint8_t get_dst(uint16_t *adr)
@@ -207,10 +230,14 @@ uint8_t get_dst(uint16_t *adr)
 uint8_t get_srcb(uint16_t *adr)
 {
 	uint8_t ss;
+	uint8_t is_reg;
 
 	ss = (uint8_t)((curins & 0007700) >> 6);
 
-	return parse_arg(adr, ss, 1);
+	is_reg = parse_arg(adr, ss, 1);
+	debug_print(", ");
+
+	return is_reg;
 }
 
 uint8_t get_dstb(uint16_t *adr)
@@ -1450,7 +1477,7 @@ void run(void)
 		     i < n;
 		     ++i) {
 			if ((curins & ins[i].mask) == ins[i].opcode) {
-				debug_print(ins[i].name);
+				debug_print("%s ", ins[i].name);
 				ins[i].exec();
 				debug_refresh();
 				break;
