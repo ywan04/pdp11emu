@@ -12,6 +12,7 @@
 #define A_XCSR 0177564
 #define A_XBUF 0177566
 
+void bus_init(void);
 void *get_low_psw(void);
 char rbuf_readed(void);
 void mem_addressing(uint16_t adr);

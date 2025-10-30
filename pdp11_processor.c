@@ -127,6 +127,7 @@ instruction_t ins[] = {
 
 	{ 0177777, 0000000, "halt", p_halt },
 	{ 0177777, 0000001, "wait", p_wait },
+	{ 0177777, 0000005, "reset", p_reset },
 	{ 0177777, 0000240, "nop", p_nop },
 
 	/* CONDITION CODE OPERATORS */
@@ -1386,6 +1387,11 @@ void p_wait(void)
 	PC -= 2;
 }
 
+void p_reset(void)
+{
+	bus_init();
+}
+
 void p_nop(void)
 {
 }
@@ -1430,7 +1436,7 @@ void run(void)
 	
 	PC = 01000;
 
-	writew(A_XCSR, 0000200); /* XCSR: transmitter ready */
+	bus_init();
 	flag = get_low_psw();
 
 	for (;;) {

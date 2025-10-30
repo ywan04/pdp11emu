@@ -9,10 +9,14 @@ static union {
 
 static char rbuf_r;
 
-//void bus_init(void)
-//{
-	// todo
-//}
+void bus_init(void)
+{
+	writew(A_XCSR, 0000200); /* XCSR: transmitter ready */
+	writew(A_XBUF, 0000000);
+	writew(A_RCSR, 0000000);
+	writew(A_RBUF, 0000000);
+	rbuf_readed();
+}
 
 void *get_low_psw(void)
 {

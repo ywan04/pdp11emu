@@ -104,6 +104,7 @@ void p_rtt(void);
 
 void p_halt(void);
 void p_wait(void);
+void p_reset(void);
 void p_nop(void);
 
 /* CONDITION CODE OPERATORS */
