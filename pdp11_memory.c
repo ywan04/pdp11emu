@@ -9,6 +9,11 @@ static union {
 
 static char rbuf_r;
 
+//void bus_init(void)
+//{
+	// todo
+//}
+
 void *get_low_psw(void)
 {
 	return &memory.bytes[A_PSW+1];

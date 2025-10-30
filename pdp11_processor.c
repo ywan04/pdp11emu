@@ -126,6 +126,7 @@ instruction_t ins[] = {
 	/* MISCELLANEOUS */
 
 	{ 0177777, 0000000, "halt", p_halt },
+	{ 0177777, 0000001, "wait", p_wait },
 	{ 0177777, 0000240, "nop", p_nop },
 
 	/* CONDITION CODE OPERATORS */
@@ -1378,6 +1379,11 @@ void p_rtt(void)
 	PC = readw(SP);
 	writew(A_PSW, readw(SP += 2));
 	SP += 2;
+}
+
+void p_wait(void)
+{
+	PC -= 2;
 }
 
 void p_nop(void)

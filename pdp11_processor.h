@@ -103,6 +103,7 @@ void p_rtt(void);
 /* MISCELLANEOUS */
 
 void p_halt(void);
+void p_wait(void);
 void p_nop(void);
 
 /* CONDITION CODE OPERATORS */
