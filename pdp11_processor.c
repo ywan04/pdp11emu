@@ -146,6 +146,8 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 {
 	uint8_t mod, regn;
 	uint16_t x;
+
+	debug_print(" ");
 	
 	mod  = arg >> 3;
 	regn = arg & 07;
@@ -213,7 +215,7 @@ uint8_t get_src(uint16_t *adr)
 	ss = (uint8_t)((curins & 0007700) >> 6);
 
 	is_reg = parse_arg(adr, ss, 2);
-	debug_print(", ");
+	debug_print(",");
 
 	return is_reg;
 }
@@ -235,7 +237,7 @@ uint8_t get_srcb(uint16_t *adr)
 	ss = (uint8_t)((curins & 0007700) >> 6);
 
 	is_reg = parse_arg(adr, ss, 1);
-	debug_print(", ");
+	debug_print(",");
 
 	return is_reg;
 }
@@ -1477,7 +1479,7 @@ void run(void)
 		     i < n;
 		     ++i) {
 			if ((curins & ins[i].mask) == ins[i].opcode) {
-				debug_print("%s ", ins[i].name);
+				debug_print(ins[i].name);
 				ins[i].exec();
 				debug_refresh();
 				break;

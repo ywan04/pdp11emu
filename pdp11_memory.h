@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define MEMSIZE (64*1024) // 64KB
+#define MEMSIZE (64*1024) /* 64KB */
 
 #define A_PSW  0177776
 
@@ -22,4 +22,4 @@ void writew(uint16_t adr, uint16_t w);
 uint16_t readw(uint16_t adr);
 void loadfile(const char *filename);
 
-#endif // PDP11_MEMORY__H
+#endif /* PDP11_MEMORY__H */

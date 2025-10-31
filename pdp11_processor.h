@@ -111,4 +111,4 @@ void p_nop(void);
 
 void p_cco(void);
 
-#endif // PDP11_PROCESSOR__H
+#endif /* PDP11_PROCESSOR__H */
