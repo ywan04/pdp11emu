@@ -14,5 +14,8 @@ all: pdp11emu
 pdp11emu: ${OBJ}
 	${CC} -o $@ ${OBJ} ${LDFLAGS}
 
+debug: ${OBJ}
+	${CC} -g -o $@ ${OBJ} ${LDFLAGS}
+
 clean:
-	rm -f pdp11emu *.o
+	rm -f pdp11emu debug *.o
