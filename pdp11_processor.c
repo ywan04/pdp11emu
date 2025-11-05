@@ -1418,7 +1418,7 @@ void p_wait(void)
 
 void p_reset(void)
 {
-	bus_init();
+	unibus_init();
 }
 
 void p_nop(void)
@@ -1465,7 +1465,7 @@ void run(void)
 	
 	PC = 01000;
 
-	bus_init();
+	unibus_init();
 	flag = get_low_psw();
 
 	for (;;) {

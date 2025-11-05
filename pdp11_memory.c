@@ -9,7 +9,7 @@ static union {
 
 static char rbuf_r;
 
-void bus_init(void)
+void unibus_init(void)
 {
 	writew(A_XCSR, 0000200); /* XCSR: transmitter ready */
 	writew(A_XBUF, 0000000);

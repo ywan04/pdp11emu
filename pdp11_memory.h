@@ -12,7 +12,14 @@
 #define A_XCSR 0177564
 #define A_XBUF 0177566
 
-void bus_init(void);
+#define A_RKDS 0177400
+#define A_RKER 0177402
+#define A_RKCS 0177404
+#define A_RKWC 0177406
+#define A_RKBA 0177410
+#define A_RKDA 0177412
+
+void unibus_init(void);
 void *get_low_psw(void);
 char rbuf_readed(void);
 void mem_addressing(uint16_t adr);
