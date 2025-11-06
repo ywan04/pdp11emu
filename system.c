@@ -1,6 +1,7 @@
 #include "system.h"
 #include "debug.h"
 #include "terminal.h"
+#include "rk11.h"
 
 #include <ncurses.h>
 
@@ -13,6 +14,8 @@ void system_exit(const char *str, int err)
 	debug_system_destroy();
 
 	endwin();
+
+	rk11_unattach_disks();
 
 	fprintf(stderr, str);
 

@@ -4,6 +4,7 @@
 #include "debug.h"
 #include "terminal.h"
 #include "system.h"
+#include "rk11.h"
 
 #include <ncurses.h>
 
@@ -18,6 +19,7 @@ void help(const char *progname)
 int main(int argc, char *argv[])
 {
 	int i, j;
+	int n;
 
 	if (argc == 1) {
 		help(argv[0]);
@@ -33,16 +35,29 @@ int main(int argc, char *argv[])
 			printf("%s-"VERSION"\n", argv[0]);
 			return SYSTEM_OK;
 		case 'f':
-			if (j >= argc) {
+			if (j+1 > argc) {
 				fprintf(stderr, "error: not enough arguments\n");
 				return SYSTEM_ERROR;
 			}
 			loadfile(argv[j++]);
 			break;
 		case 'd':
+			if (j+2 > argc) {
+				fprintf(stderr, "error: not enough arguments\n");
+				return SYSTEM_ERROR;
+			}
+			n = atoi(argv[j++]);
+			rk11_attach_disk(n, argv[j++]);
+			break;
 		case 'D':
-			fprintf(stderr, "error: not implemented\n");
-			return SYSTEM_ERROR;
+			if (j+2 > argc) {
+				fprintf(stderr, "error: not enough arguments\n");
+				return SYSTEM_ERROR;
+			}
+			n = atoi(argv[j++]);
+			rk11_attach_disk(n, argv[j++]);
+			rk11_set_read_only(n);
+			break;
 		default:
 			fprintf(stderr,
 				"error: unknown option %c\n", argv[1][i]);
@@ -66,6 +81,8 @@ int main(int argc, char *argv[])
 	debug_destroy();
 
 	endwin();
+
+	rk11_unattach_disks();
 
 	return SYSTEM_OK;
 }
