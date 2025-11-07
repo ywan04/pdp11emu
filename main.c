@@ -13,7 +13,12 @@
 void help(const char *progname)
 {
 	printf("usage: %s options [arguments]\n", progname);
-	// todo: description for every option
+	puts("options:");
+	puts("  h\tdisplay help");
+	puts("  v\tdisplay version");
+	puts("  f\tload file");
+	puts("  d\tattach disk");
+	puts("  D\tattach disk (READ ONLY)");
 }
 
 int main(int argc, char *argv[])
@@ -36,14 +41,16 @@ int main(int argc, char *argv[])
 			return SYSTEM_OK;
 		case 'f':
 			if (j+1 > argc) {
-				fprintf(stderr, "error: not enough arguments\n");
+				fprintf(stderr,
+					"error: not enough arguments\n");
 				return SYSTEM_ERROR;
 			}
 			loadfile(argv[j++]);
 			break;
 		case 'd':
 			if (j+2 > argc) {
-				fprintf(stderr, "error: not enough arguments\n");
+				fprintf(stderr,
+					"error: not enough arguments\n");
 				return SYSTEM_ERROR;
 			}
 			n = atoi(argv[j++]);
@@ -51,7 +58,8 @@ int main(int argc, char *argv[])
 			break;
 		case 'D':
 			if (j+2 > argc) {
-				fprintf(stderr, "error: not enough arguments\n");
+				fprintf(stderr,
+					"error: not enough arguments\n");
 				return SYSTEM_ERROR;
 			}
 			n = atoi(argv[j++]);
@@ -75,7 +83,7 @@ int main(int argc, char *argv[])
 	debug_create();
 	terminal_create();
 
-	run();
+	pdp11_run();
 
 	terminal_destroy();
 	debug_destroy();

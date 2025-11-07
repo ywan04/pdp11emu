@@ -1,4 +1,5 @@
 #include "pdp11_memory.h"
+#include "system.h"
 
 #include <stdio.h>
 
@@ -73,6 +74,9 @@ void loadfile(const char *filename)
 	uint16_t adr, n, i;
 
 	f = fopen(filename, "r");
+
+	if (f == NULL)
+		system_exit("error: cannot open a file", SYSTEM_ERROR);
 
 	fscanf(f, "%hu", &i);
 

@@ -1,4 +1,6 @@
 #include "rk11.h"
+#include "pdp11_memory.h"
+#include "system.h"
 
 #include <stdio.h>
 
@@ -17,6 +19,36 @@ struct {
 	} disk;
 } rk11[8];
 
+void rk11_init(void)
+{
+	writew(A_RKDA, 0000000);
+}
+
+void rk11_cycle(void)
+{
+}
+
+uint16_t rk11_readw(uint8_t n, uint8_t c, uint8_t t, uint8_t s, uint8_t a)
+{
+	n &= 07;
+	c %= 203;
+	t %= 2;
+	s %= 12;
+
+	return rk11[n].disk.cylinder[c].track[t].sector[s].data[a];
+}
+
+void rk11_writew(uint8_t n, uint8_t c, uint8_t t, uint8_t s, uint8_t a,
+		 uint16_t val)
+{
+	n &= 07;
+	c %= 203;
+	t %= 2;
+	s %= 12;
+
+	rk11[n].disk.cylinder[c].track[t].sector[s].data[a] = val;
+}
+
 void rk11_attach_disk(uint8_t n, char *filename)
 {
 	FILE *f;
@@ -26,6 +58,9 @@ void rk11_attach_disk(uint8_t n, char *filename)
 	rk11[n].filename = filename;
 
 	f = fopen(rk11[n].filename, "rb");
+	if (f == NULL)
+		system_exit("error: cannot open a file", SYSTEM_ERROR);
+
 	fread(&rk11[n].disk, 2, sizeof(rk11[n].disk), f);
 
 	fclose(f);
@@ -42,6 +77,9 @@ void rk11_unattach_disk(uint8_t n)
 
 	if (!rk11[n].read_only) {
 		f = fopen(rk11[n].filename, "wb");
+		if (f == NULL)
+			system_exit("error: cannot open a file", SYSTEM_ERROR);
+
 		fwrite(&rk11[n].disk, 2, sizeof(rk11[n].disk), f);
 
 		fclose(f);

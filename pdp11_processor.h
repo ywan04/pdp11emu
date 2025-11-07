@@ -1,7 +1,7 @@
 #ifndef PDP11_PROCESSOR__H
 #define PDP11_PROCESSOR__H
 
-void run(void);
+void pdp11_run(void);
 
 /*
  * === INSTRUCTIONS ===

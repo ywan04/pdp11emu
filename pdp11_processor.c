@@ -1457,7 +1457,7 @@ void p_cco(void)
 	}
 }
 
-void run(void)
+void pdp11_run(void)
 {
 	uint8_t i, n;
 	uint16_t xbuf;
