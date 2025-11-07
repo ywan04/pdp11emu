@@ -3,6 +3,7 @@
 #include "debug.h"
 #include "terminal.h"
 #include "system.h"
+#include "rk11.h"
 
 #include <ncurses.h>
 
@@ -1500,6 +1501,8 @@ void pdp11_run(void)
 		if (rbuf_readed()) {
 			writew(A_RCSR, 0000000);
 		}
+
+		rk11_cycle();
 
 		if (quit) {
 			terminal_refresh();

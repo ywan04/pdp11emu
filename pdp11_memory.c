@@ -1,5 +1,6 @@
 #include "pdp11_memory.h"
 #include "system.h"
+#include "rk11.h"
 
 #include <stdio.h>
 
@@ -17,6 +18,8 @@ void unibus_init(void)
 	writew(A_RCSR, 0000000);
 	writew(A_RBUF, 0000000);
 	rbuf_readed();
+
+	rk11_init();
 }
 
 void *get_low_psw(void)

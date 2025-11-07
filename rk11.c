@@ -26,6 +26,47 @@ void rk11_init(void)
 
 void rk11_cycle(void)
 {
+	static uint8_t exec;
+	uint16_t rkcs_data, go, func;
+
+	rkcs_data = readw(A_RKCS);
+
+	go = rkcs_data & 01;
+	func = (rkcs_data >> 1) & 07;
+
+	if (go) {
+		exec = 1;
+		writew(A_RKCS, rkcs_data & 0177776);
+	}
+
+	if (exec) {
+		switch (func) {
+		case RK11_CONTROL_RESET:
+			exec = 0;
+			break;
+		case RK11_WRITE:
+			exec = 0
+			break;
+		case RK11_READ:
+			exec = 0;
+			break;
+		case RK11_WRITE_CHECK:
+			exec = 0;
+			break;
+		case RK11_SEEK:
+			exec = 0;
+			break;
+		case RK11_READ_CHECK:
+			exec = 0;
+			break;
+		case RK11_DRIVE_RESET:
+			exec = 0;
+			break;
+		case RK11_WRITE_LOCK:
+			exec = 0;
+			break;
+		}
+	}
 }
 
 uint16_t rk11_readw(uint8_t n, uint8_t c, uint8_t t, uint8_t s, uint8_t a)
