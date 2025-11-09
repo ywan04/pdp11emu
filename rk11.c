@@ -45,7 +45,7 @@ void rk11_cycle(void)
 			exec = 0;
 			break;
 		case RK11_WRITE:
-			exec = 0
+			exec = 0;
 			break;
 		case RK11_READ:
 			exec = 0;
@@ -100,7 +100,7 @@ void rk11_attach_disk(uint8_t n, char *filename)
 
 	f = fopen(rk11[n].filename, "rb");
 	if (f == NULL)
-		system_exit("error: cannot open a file", SYSTEM_ERROR);
+		system_exit("error: cannot open a file\n", SYSTEM_ERROR);
 
 	fread(&rk11[n].disk, 2, sizeof(rk11[n].disk), f);
 
@@ -119,7 +119,8 @@ void rk11_unattach_disk(uint8_t n)
 	if (!rk11[n].read_only) {
 		f = fopen(rk11[n].filename, "wb");
 		if (f == NULL)
-			system_exit("error: cannot open a file", SYSTEM_ERROR);
+			system_exit("error: cannot open a file\n",
+				    SYSTEM_ERROR);
 
 		fwrite(&rk11[n].disk, 2, sizeof(rk11[n].disk), f);
 
