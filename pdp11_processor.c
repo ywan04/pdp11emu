@@ -1458,6 +1458,15 @@ void p_cco(void)
 	}
 }
 
+void pdp11_int(uint16_t pc)
+{
+	writew(SP -= 2, readw(A_PSW));
+	writew(SP -= 2, PC);
+
+	PC = readw(pc);
+	writew(A_PSW, readw(pc + 2));
+}
+
 void pdp11_run(void)
 {
 	uint8_t i, n;

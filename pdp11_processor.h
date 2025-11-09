@@ -1,6 +1,9 @@
 #ifndef PDP11_PROCESSOR__H
 #define PDP11_PROCESSOR__H
 
+#include <stdint.h>
+
+void pdp11_int(uint16_t);
 void pdp11_run(void);
 
 /*
