@@ -4,6 +4,6 @@
 #define SYSTEM_OK    0x0
 #define SYSTEM_ERROR 0xE
 
-void system_exit(const char *str, int err);
+void system_exit(int err, const char *strf, ...);
 
 #endif /* SYSTEM__H */

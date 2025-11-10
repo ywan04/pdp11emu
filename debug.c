@@ -11,8 +11,8 @@ static WINDOW *win;
 void debug_create(void)
 {
 	if (win != NULL) {
-		system_exit("error: debug window is already created\n",
-			    SYSTEM_ERROR);
+		system_exit(SYSTEM_ERROR,
+			    "error: debug window is already created\n");
 	}
 	
 	win = newwin(DEBUG_HEIGHT, DEBUG_WIDTH, DEBUG_Y, DEBUG_X);
@@ -26,7 +26,7 @@ void debug_destroy(void)
 		delwin(win);
 		win = NULL;
 	} else {
-		system_exit("error: debug window is clean\n", SYSTEM_ERROR);
+		system_exit(SYSTEM_ERROR, "error: debug window is clean\n");
 	}
 }
 

@@ -203,7 +203,8 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		PC += 2;
 		return 0;
 	default:
-		system_exit("error: mod cannot be larger than 7\n", SYSTEM_ERROR);
+		system_exit(SYSTEM_ERROR,
+			    "error: mod cannot be larger than 7\n");
 		return 2;
 	}
 }

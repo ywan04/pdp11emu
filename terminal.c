@@ -12,8 +12,8 @@ static int y, x;
 void terminal_create(void)
 {
 	if (win != NULL) {
-		system_exit("error: terminal window is already created\n",
-			    SYSTEM_ERROR);
+		system_exit(SYSTEM_ERROR,
+			    "error: terminal window is already created\n");
 	}
 	
 	win = newwin(TERMINAL_HEIGHT, TERMINAL_WIDTH, TERMINAL_Y, TERMINAL_X);
@@ -31,7 +31,7 @@ void terminal_destroy(void)
 		delwin(win);
 		win = NULL;
 	} else {
-		system_exit("error: terminal window is clean\n", SYSTEM_ERROR);
+		system_exit(SYSTEM_ERROR, "error: terminal window is clean\n");
 	}
 }
 
