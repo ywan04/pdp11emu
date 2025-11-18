@@ -14,12 +14,27 @@ make
 
 run a program:
 ```bash
-./pdp11emu f program
+./pdp11emu f filename
 ```
 
 for help use:
 ```bash
 ./pdp11emu h
+```
+
+## file format
+
+The first line contains a single decimal number *n* - the number of load operations to be performed. The next *n* lines contain two octal numbers each, the address and the data to be loaded into memory at that address.
+Example:
+```
+7
+001000 105737
+001002 177564
+001004 100375
+001006 112737
+001010 000101
+001012 177566
+001014 000771
 ```
 
 ## license
