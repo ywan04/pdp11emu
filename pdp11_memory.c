@@ -79,7 +79,7 @@ void loadfile(const char *filename)
 	f = fopen(filename, "r");
 
 	if (f == NULL)
-		system_exit(SYSTEM_ERROR, "error: cannot open a file %s\n",
+		system_exit(SYSTEM_ERROR, "error: cannot open a file '%s'\n",
 			    filename);
 
 	fscanf(f, "%hu", &i);

@@ -100,7 +100,7 @@ void rk11_attach_disk(uint8_t n, char *filename)
 
 	f = fopen(rk11[n].filename, "rb");
 	if (f == NULL)
-		system_exit(SYSTEM_ERROR, "error: cannot open a file %s\n",
+		system_exit(SYSTEM_ERROR, "error: cannot open a file '%s'\n",
 			    rk11[n].filename);
 
 	fread(&rk11[n].disk, 2, sizeof(rk11[n].disk), f);
@@ -121,7 +121,7 @@ void rk11_unattach_disk(uint8_t n)
 		f = fopen(rk11[n].filename, "wb");
 		if (f == NULL)
 			system_exit(SYSTEM_ERROR,
-				    "error: cannot open a file %s\n",
+				    "error: cannot open a file '%s'\n",
 				    rk11[n].filename);
 
 		fwrite(&rk11[n].disk, 2, sizeof(rk11[n].disk), f);
