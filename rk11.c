@@ -28,7 +28,8 @@ void rk11_cycle(void)
 {
 	uint16_t rkcs_data, rkda_data, go, func;
 	uint16_t n, cyl, sur, sec, cw;
-	uint16_t wcr, adr;
+	uint16_t adr;
+	int16_t wcr;
 
 	rkcs_data = readw(A_RKCS);
 	go = rkcs_data & 01;
@@ -45,7 +46,7 @@ void rk11_cycle(void)
 	adr = readw(A_RKBA);
 
 	if (go) {
-		writew(A_RKCS, rkcs_data & 0177776);
+		rkcs_data &= 0177776;
 
 		switch (func) {
 		case RK11_CONTROL_RESET:
@@ -83,6 +84,9 @@ void rk11_cycle(void)
 		case RK11_WRITE_LOCK:
 			break;
 		}
+
+		rkcs_data |= 0200;
+		writew(A_RKCS, rkcs_data);
 	}
 }
 
