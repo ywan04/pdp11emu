@@ -7,6 +7,7 @@
 #include <stdarg.h>
 
 static WINDOW *win;
+static FILE *tfile;
 
 void debug_create(void)
 {
@@ -22,6 +23,7 @@ void debug_create(void)
 
 void debug_destroy(void)
 {
+	debug_close_trace();
 	if (win != NULL) {
 		delwin(win);
 		win = NULL;
@@ -68,10 +70,28 @@ void debug_print(const char *format, ...)
 	va_start(args, format);
 	vsnprintf(str, 128, format, args);
 	wprintw(win, str);
+	fprintf(tfile, str);
 	va_end(args);
 }
 
 void debug_refresh(void)
 {
 	wrefresh(win);
+	fputc('\n', tfile);
+}
+
+void debug_set_trace(const char *filename)
+{
+	if (tfile != NULL)
+		fclose(tfile);
+
+	tfile = fopen(filename, "w");
+}
+
+void debug_close_trace(void)
+{
+	if (tfile != NULL) {
+		fclose(tfile);
+		tfile = NULL;
+	}
 }

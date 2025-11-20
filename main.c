@@ -19,6 +19,7 @@ void help(const char *progname)
 	puts("  f\tload file");
 	puts("  d\tattach disk");
 	puts("  D\tattach disk (READ ONLY)");
+	puts("  t\ttrace to file");
 }
 
 int main(int argc, char *argv[])
@@ -65,6 +66,14 @@ int main(int argc, char *argv[])
 			n = atoi(argv[j++]);
 			rk11_attach_disk(n, argv[j++]);
 			rk11_set_read_only(n);
+			break;
+		case 't':
+			if (j+1 > argc) {
+				fprintf(stderr,
+					"error: not enough arguments\n");
+				return SYSTEM_ERROR;
+			}
+			debug_set_trace(argv[j++]);
 			break;
 		default:
 			fprintf(stderr,

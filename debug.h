@@ -16,5 +16,7 @@ void debug_print_regs(uint16_t *reg);
 void debug_print_init(void);
 void debug_print(const char *format, ...);
 void debug_refresh(void);
+void debug_set_trace(const char *filename);
+void debug_close_trace(void);
 
 #endif /* DEBUG__H */
