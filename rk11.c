@@ -26,44 +26,61 @@ void rk11_init(void)
 
 void rk11_cycle(void)
 {
-	static uint8_t exec;
-	uint16_t rkcs_data, go, func;
+	uint16_t rkcs_data, rkda_data, go, func;
+	uint16_t n, cyl, sur, sec, cw;
+	uint16_t wcr, adr;
 
 	rkcs_data = readw(A_RKCS);
-
 	go = rkcs_data & 01;
 	func = (rkcs_data >> 1) & 07;
 
-	if (go) {
-		exec = 1;
-		writew(A_RKCS, rkcs_data & 0177776);
-	}
+	rkda_data = readw(A_RKDA);
+	n = rkda_data >> 13;
+	cyl = (rkda_data >> 5) & 0377;
+	sur = (rkda_data >> 4) & 01;
+	sec = rkda_data & 017;
+	cw = 0;
 
-	if (exec) {
+	wcr = readw(A_RKWC);
+	adr = readw(A_RKBA);
+
+	if (go) {
+		writew(A_RKCS, rkcs_data & 0177776);
+
 		switch (func) {
 		case RK11_CONTROL_RESET:
-			exec = 0;
 			break;
 		case RK11_WRITE:
-			exec = 0;
 			break;
 		case RK11_READ:
-			exec = 0;
+			for (; wcr < 0; ++wcr, adr += 2) {
+				writew(adr, rk11_readw(n, cyl, sur, sec, cw++));
+				if (cw >= 256) {
+					cw = 0;
+					++sec;
+				}
+				if (sec >= 12) {
+					sec = 0;
+					++sur;
+				}
+				if (sur >= 2) {
+					sur = 0;
+					++cyl;
+				}
+				if (cyl >= 203) {
+					// todo
+				}
+			}
 			break;
 		case RK11_WRITE_CHECK:
-			exec = 0;
 			break;
 		case RK11_SEEK:
-			exec = 0;
 			break;
 		case RK11_READ_CHECK:
-			exec = 0;
 			break;
 		case RK11_DRIVE_RESET:
-			exec = 0;
 			break;
 		case RK11_WRITE_LOCK:
-			exec = 0;
 			break;
 		}
 	}
