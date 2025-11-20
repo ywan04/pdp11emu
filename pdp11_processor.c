@@ -165,15 +165,22 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		*adr = reg[regn];
 		return 0;
 	case 2:
-		debug_print("(r%d)+", regn);
+		if (regn == 7)
+			debug_print("#%o", readw(reg[regn]));
+		else
+			debug_print("(r%d)+", regn);
 
 		*adr = reg[regn];
 		reg[regn] += (regn >= 6) ? 2 : incv;
 		return 0;
 	case 3:
-		debug_print("@(r%d)+", regn);
-
 		*adr = readw(reg[regn]);
+
+		if (regn == 7)
+			debug_print("@#%o", *adr);
+		else
+			debug_print("@(r%d)+", regn);
+
 		reg[regn] += 2;
 		return 0;
 	case 4:
