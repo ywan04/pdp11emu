@@ -111,7 +111,7 @@ instruction_t ins[] = {
 
 	{ 0177700, 0000100, "jmp", p_jmp },
 	{ 0177000, 0004000, "jsr", p_jsr },
-	{ 0177770, 0000020, "rts", p_rts },
+	{ 0177770, 0000200, "rts", p_rts },
 	{ 0177700, 0006400, "mark", p_mark },
 	{ 0177000, 0077000, "sob", p_sob },
 
@@ -1318,9 +1318,9 @@ void p_jmp(void)
 	uint16_t dst_adr;
 
 	if (get_dst(&dst_adr)) {
-		PC = reg[dst_adr];
+		// todo: illegal
 	} else {
-		PC = readw(dst_adr);
+		PC = dst_adr;
 	}
 }
 
@@ -1333,7 +1333,11 @@ void p_jsr(void)
 
 	writew(SP -= 2, reg[r]);
 	reg[r] = PC;
-	PC = (get_dst(&dst_adr)) ? reg[dst_adr] : readw(dst_adr);
+	if (get_dst(&dst_adr)) {
+		// todo: illegal
+	} else {
+		PC = dst_adr;
+	}
 }
 
 void p_rts(void)
