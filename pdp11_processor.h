@@ -114,4 +114,8 @@ void p_nop(void);
 
 void p_cco(void);
 
+/* ILLEGAL INSTRUCTION */
+
+void p_illegal(void);
+
 #endif /* PDP11_PROCESSOR__H */

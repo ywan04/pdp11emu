@@ -134,6 +134,10 @@ instruction_t ins[] = {
 	/* CONDITION CODE OPERATORS */
 
 	{ 0177740, 0000240, "", p_cco },
+
+	/* ILLEGAL INSTRUCTION */
+
+	{ 0000000, 0000000, "illegal", p_illegal },
 };
 
 static uint16_t reg[8];
@@ -1318,7 +1322,7 @@ void p_jmp(void)
 	uint16_t dst_adr;
 
 	if (get_dst(&dst_adr)) {
-		// todo: illegal
+		p_illegal();
 	} else {
 		PC = dst_adr;
 	}
@@ -1334,7 +1338,7 @@ void p_jsr(void)
 	writew(SP -= 2, reg[r]);
 	reg[r] = PC;
 	if (get_dst(&dst_adr)) {
-		// todo: illegal
+		p_illegal();
 	} else {
 		PC = dst_adr;
 	}
@@ -1470,6 +1474,11 @@ void p_cco(void)
 		flag->C = setv;
 		debug_print("C");
 	}
+}
+
+void p_illegal(void)
+{
+	system_exit(SYSTEM_ERROR, "error: illegal instruction\n");
 }
 
 void pdp11_int(uint16_t pc)
