@@ -199,7 +199,7 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		x = readw(PC);
 		PC += 2;
 		if (regn == 7)
-			debug_print("%06o", PC + x);
+			debug_print("%06o", (uint16_t)(PC + x));
 		else
 			debug_print("%d(r%d)", x, regn);
 
@@ -209,7 +209,7 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		x = readw(PC);
 		PC += 2;
 		if (regn == 7)
-			debug_print("@%06o", PC + x);
+			debug_print("@%06o", (uint16_t)(PC + x));
 		else
 			debug_print("@%d(r%d)", x, regn);
 
