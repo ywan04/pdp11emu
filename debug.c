@@ -70,14 +70,16 @@ void debug_print(const char *format, ...)
 	va_start(args, format);
 	vsnprintf(str, 128, format, args);
 	wprintw(win, str);
-	fprintf(tfile, str);
+	if (tfile != NULL)
+		fprintf(tfile, str);
 	va_end(args);
 }
 
 void debug_refresh(void)
 {
 	wrefresh(win);
-	fputc('\n', tfile);
+	if (tfile != NULL)
+		fputc('\n', tfile);
 }
 
 void debug_set_trace(const char *filename)

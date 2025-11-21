@@ -88,6 +88,7 @@ int main(int argc, char *argv[])
 	}
 
 	initscr();
+	noecho();
 
 	debug_create();
 	terminal_create();
