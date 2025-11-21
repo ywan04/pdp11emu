@@ -197,17 +197,23 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		return 0;
 	case 6:
 		x = readw(PC);
-		debug_print("%d(r%d)", x, regn);
+		PC += 2;
+		if (regn == 7)
+			debug_print("%06o", PC + x);
+		else
+			debug_print("%d(r%d)", x, regn);
 
 		*adr = reg[regn] + x;
-		PC += 2;
 		return 0;
 	case 7:
 		x = readw(PC);
-		debug_print("@%d(r%d)", x, regn);
+		PC += 2;
+		if (regn == 7)
+			debug_print("@%06o", PC + x);
+		else
+			debug_print("@%d(r%d)", x, regn);
 
 		*adr = readw(reg[regn] + x);
-		PC += 2;
 		return 0;
 	default:
 		system_exit(SYSTEM_ERROR,
