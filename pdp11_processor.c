@@ -1217,7 +1217,7 @@ void p_xor(void)
 	flag->V = 0;
 }
 
-void p_br(void)
+void p_br_if(uint8_t b)
 {
 	uint16_t offset;
 
@@ -1230,91 +1230,87 @@ void p_br(void)
 		offset = -offset;
 	}
 
-	PC += 2 * offset;
+	offset *= 2;
+	
+	debug_print(" .%d", (int16_t)offset + 2);
+
+	if (b)
+		PC += offset;
+}
+
+void p_br(void)
+{
+	p_br_if(1);
 }
 
 void p_bne(void)
 {
-	if (!flag->Z)
-		p_br();
+	p_br_if(!flag->Z);
 }
 
 void p_beq(void)
 {
-	if (flag->Z)
-		p_br();
+	p_br_if(flag->Z);
 }
 
 void p_bpl(void)
 {
-	if (!flag->N)
-		p_br();
+	p_br_if(!flag->N);
 }
 
 void p_bmi(void)
 {
-	if (flag->N)
-		p_br();
+	p_br_if(flag->N);
 }
 
 void p_bvc(void)
 {
-	if (!flag->V)
-		p_br();
+	p_br_if(!flag->V);
 }
 
 void p_bvs(void)
 {
-	if (flag->V)
-		p_br();
+	p_br_if(flag->V);
 }
 
 void p_bcc(void)
 {
-	if (!flag->C)
-		p_br();
+	p_br_if(!flag->C);
 }
 
 void p_bcs(void)
 {
-	if (flag->C)
-		p_br();
+	p_br_if(flag->C);
 }
 
 void p_bge(void)
 {
-	if ((flag->N ^ flag->V) == 0)
-		p_br();
+	p_br_if((flag->N ^ flag->V) == 0);
 }
 
 void p_blt(void)
 {
-	if ((flag->N ^ flag->V) == 1)
-		p_br();
+	p_br_if((flag->N ^ flag->V) == 1);
 }
 
 void p_bgt(void)
 {
-	if ((flag->Z | (flag->N ^ flag->V)) == 0)
-		p_br();
+	p_br_if((flag->Z | (flag->N ^ flag->V)) == 0);
 }
 
 void p_ble(void)
 {
-	if ((flag->Z | (flag->N ^ flag->V)) == 1)
-		p_br();
+	p_br_if((flag->Z | (flag->N ^ flag->V)) == 1);
 }
 
 void p_bhi(void)
 {
-	if ((flag->C | flag->Z) == 0)
-		p_br();
+	p_br_if((flag->C | flag->Z) == 0);
 }
 
 void p_blo(void)
 {
-	if ((flag->C | flag->Z) == 1)
-		p_br();
+	p_br_if((flag->C | flag->Z) == 1);
 }
 
 void p_jmp(void)
