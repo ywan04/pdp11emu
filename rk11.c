@@ -52,6 +52,24 @@ void rk11_cycle(void)
 		case RK11_CONTROL_RESET:
 			break;
 		case RK11_WRITE:
+			for (; wcr < 0; ++wcr, adr += 2) {
+				rk11_writew(n, cyl, sur, sec, cw++, readw(adr));
+				if (cw >= 256) {
+					cw = 0;
+					++sec;
+				}
+				if (sec >= 12) {
+					sec = 0;
+					++sur;
+				}
+				if (sur >= 2) {
+					sur = 0;
+					++cyl;
+				}
+				if (cyl >= 203) {
+					// todo
+				}
+			}
 			break;
 		case RK11_READ:
 			for (; wcr < 0; ++wcr, adr += 2) {
