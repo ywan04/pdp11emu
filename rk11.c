@@ -1,5 +1,5 @@
 #include "rk11.h"
-#include "pdp11_memory.h"
+#include "memory.h"
 #include "system.h"
 
 #include <stdio.h>

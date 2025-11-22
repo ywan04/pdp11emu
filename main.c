@@ -1,5 +1,5 @@
-#include "pdp11_memory.h"
-#include "pdp11_processor.h"
+#include "memory.h"
+#include "processor.h"
 
 #include "debug.h"
 #include "terminal.h"
