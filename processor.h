@@ -1,5 +1,5 @@
-#ifndef PDP11_PROCESSOR__H
-#define PDP11_PROCESSOR__H
+#ifndef PROCESSOR__H
+#define PROCESSOR__H
 
 #include <stdint.h>
 
@@ -118,4 +118,4 @@ void p_cco(void);
 
 void p_illegal(void);
 
-#endif /* PDP11_PROCESSOR__H */
+#endif /* PROCESSOR__H */

@@ -1,5 +1,5 @@
-#ifndef PDP11_MEMORY__H
-#define PDP11_MEMORY__H
+#ifndef MEMORY__H
+#define MEMORY__H
 
 #include <stdint.h>
 
@@ -29,4 +29,4 @@ void writew(uint16_t adr, uint16_t w);
 uint16_t readw(uint16_t adr);
 void loadfile(const char *filename);
 
-#endif /* PDP11_MEMORY__H */
+#endif /* MEMORY__H */
