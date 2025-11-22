@@ -1099,9 +1099,9 @@ void p_div(void)
 	uint8_t r;
 
 	r = (curins & 0000700) >> 6;
+	debug_print(" r%d", r);
 	if (r % 2)
 		p_illegal();
-	debug_print(" r%d", r);
 	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
 	flag->V = flag->C = 1;
@@ -1167,10 +1167,10 @@ void p_ashc(void)
 	uint8_t r;
 
 	r = (curins & 0000700) >> 6;
+	debug_print(" r%d", r);
 	if (r == 7) {
 		p_illegal();
 	}
-	debug_print(" r%d", r);
 	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
 	val = *(uint32_t *)&reg[r];
