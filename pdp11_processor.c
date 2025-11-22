@@ -1068,8 +1068,9 @@ void p_mul(void)
 	uint32_t val;
 	uint8_t r;
 
-	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 	r = (curins & 0000700) >> 6;
+	debug_print(" r%d", r);
+	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
 	val = (uint32_t)reg[r] * src_val;
 	
@@ -1097,12 +1098,11 @@ void p_div(void)
 	uint16_t rem;
 	uint8_t r;
 
-	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 	r = (curins & 0000700) >> 6;
-
-	if (r % 2) {
-		exit(1);
-	}
+	if (r % 2)
+		p_illegal();
+	debug_print(" r%d", r);
+	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
 	flag->V = flag->C = 1;
 	if (src_val != 0) {
@@ -1130,8 +1130,10 @@ void p_ash(void)
 	uint16_t neg_bit, old_neg_bit;
 	uint8_t r;
 
-	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 	r = (curins & 0000700) >> 6;
+	debug_print(" r%d", r);
+	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
+
 	old_neg_bit = reg[r] & 0100000;
 
 	if (src_val & 040) {
@@ -1164,12 +1166,12 @@ void p_ashc(void)
 	uint32_t val;
 	uint8_t r;
 
-	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 	r = (curins & 0000700) >> 6;
-
 	if (r == 7) {
-		exit(1);
+		p_illegal();
 	}
+	debug_print(" r%d", r);
+	src_val = (get_dst(&src_adr)) ? reg[src_adr] : readw(src_adr);
 
 	val = *(uint32_t *)&reg[r];
 	old_neg_bit = val & 020000000000;
@@ -1205,9 +1207,10 @@ void p_xor(void)
 	uint16_t val;
 	uint8_t r;
 
+	r = (curins & 0000700) >> 6;
+	debug_print(" r%d", r);
 	dst_val = (dst_is_reg = get_dst(&dst_adr))
 		? reg[dst_adr] : readw(dst_adr);
-	r = (curins & 0000700) >> 6;
 
 	val = reg[r] ^ dst_val;
 	if (dst_is_reg) {
@@ -1334,6 +1337,7 @@ void p_jsr(void)
 	uint16_t r;
 
 	r = (curins & 0000700) >> 6;
+	debug_print(" r%d", r);
 
 	writew(SP -= 2, reg[r]);
 	reg[r] = PC;
@@ -1349,6 +1353,7 @@ void p_rts(void)
 	uint16_t r;
 
 	r = curins & 07;
+	debug_print(" r%d", r);
 
 	PC = reg[r];
 	reg[r] = readw(SP);
@@ -1371,13 +1376,15 @@ void p_sob(void)
 {
 	uint16_t r, nn;
 
-	nn = curins & 0000077;
+	nn = (curins & 0000077) * 2;
 	r = (curins & 0000700) >> 6;
+
+	debug_print(" r%d .-%d", r, nn);
 
 	--reg[r];
 
 	if (reg[r])
-		PC -= 2 * nn;
+		PC -= nn;
 }
 
 void p_emt(void)
