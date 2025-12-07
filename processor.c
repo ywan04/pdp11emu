@@ -1379,7 +1379,7 @@ void p_sob(void)
 	nn = (curins & 0000077) * 2;
 	r = (curins & 0000700) >> 6;
 
-	debug_print(" r%d .-%d", r, nn);
+	debug_print(" r%d .-%d", r, nn - 2);
 
 	--reg[r];
 
