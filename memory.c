@@ -1,6 +1,7 @@
 #include "memory.h"
 #include "system.h"
 #include "rk11.h"
+#include "mmu.h"
 
 #include <stdio.h>
 
@@ -37,38 +38,64 @@ char rbuf_readed(void)
 	return 0;
 }
 
-void mem_addressing(uint16_t adr)
+uint32_t to_physical(uint16_t adr)
 {
-	if (adr == A_RBUF)
+	if (mmu_enabled()) {
+		return mmu_get_physical(adr);
+	}
+	if (adr & 0160000)
+		return (uint32_t)adr | 0600000;
+	return adr;
+}
+
+void mem_addressing(uint32_t adr)
+{
+	if (adr == (A_RBUF | 0600000))
 		rbuf_r = 1;
 }
 
 void writeb(uint16_t adr, uint8_t b)
 {
-	mem_addressing(adr);
+	uint32_t padr;
 
-	memory.bytes[adr] = b;
+	padr = to_physical(adr);
+
+	mem_addressing(padr);
+
+	memory.bytes[padr] = b;
 }
 
 uint8_t readb(uint16_t adr)
 {
-	mem_addressing(adr);
+	uint32_t padr;
 
-	return memory.bytes[adr];
+	padr = to_physical(adr);
+
+	mem_addressing(padr);
+
+	return memory.bytes[padr];
 }
 
 void writew(uint16_t adr, uint16_t w)
 {
-	mem_addressing(adr);
+	uint32_t padr;
 
-	memory.words[adr/2] = w;
+	padr = to_physical(adr);
+
+	mem_addressing(padr);
+
+	memory.words[padr/2] = w;
 }
 
 uint16_t readw(uint16_t adr)
 {
-	mem_addressing(adr);
+	uint32_t padr;
 
-	return memory.words[adr/2];
+	padr = to_physical(adr);
+
+	mem_addressing(padr);
+
+	return memory.words[padr/2];
 }
 
 void loadfile(const char *filename)

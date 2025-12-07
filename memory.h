@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define MEMSIZE (64*1024) /* 64KB */
+#define MEMSIZE (256*1024) /* 256KB */
 
 #define A_PSW  0177776
 
@@ -22,7 +22,7 @@
 void unibus_init(void);
 void *get_low_psw(void);
 char rbuf_readed(void);
-void mem_addressing(uint16_t adr);
+void mem_addressing(uint32_t adr);
 void writeb(uint16_t adr, uint8_t b);
 uint8_t readb(uint16_t adr);
 void writew(uint16_t adr, uint16_t w);
