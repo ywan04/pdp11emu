@@ -14,11 +14,10 @@ static char rbuf_r;
 
 void unibus_init(void)
 {
-	writew(A_XCSR, 0000200); /* XCSR: transmitter ready */
-	writew(A_XBUF, 0000000);
-	writew(A_RCSR, 0000000);
-	writew(A_RBUF, 0000000);
-	rbuf_readed();
+	pwritew(A_XCSR, 0000200); /* XCSR: transmitter ready */
+	pwritew(A_XBUF, 0000000);
+	pwritew(A_RCSR, 0000000);
+	pwritew(A_RBUF, 0000000);
 
 	rk11_init();
 }
@@ -38,6 +37,12 @@ char rbuf_readed(void)
 	return 0;
 }
 
+void mem_addressing(uint32_t padr)
+{
+	if (padr == A_RBUF)
+		rbuf_r = 1;
+}
+
 uint32_t to_physical(uint16_t adr)
 {
 	if (mmu_enabled()) {
@@ -48,10 +53,14 @@ uint32_t to_physical(uint16_t adr)
 	return adr;
 }
 
-void mem_addressing(uint32_t adr)
+void pwritew(uint32_t padr, uint16_t w)
 {
-	if (adr == (A_RBUF | 0600000))
-		rbuf_r = 1;
+	memory.words[padr/2] = w;
+}
+
+uint16_t preadw(uint32_t padr)
+{
+	return memory.words[padr/2];
 }
 
 void writeb(uint16_t adr, uint8_t b)

@@ -1389,51 +1389,51 @@ void p_sob(void)
 
 void p_emt(void)
 {
-	writew(SP -= 2, readw(A_PSW));
+	writew(SP -= 2, preadw(A_PSW));
 	writew(SP -= 2, PC);
 
-	PC = readw(030);
-	writew(A_PSW, readw(032));
+	PC = preadw(030);
+	pwritew(A_PSW, preadw(032));
 }
 
 void p_trap(void)
 {
-	writew(SP -= 2, readw(A_PSW));
+	writew(SP -= 2, preadw(A_PSW));
 	writew(SP -= 2, PC);
 
-	PC = readw(034);
-	writew(A_PSW, readw(036));
+	PC = preadw(034);
+	pwritew(A_PSW, preadw(036));
 }
 
 void p_bpt(void)
 {
-	writew(SP -= 2, readw(A_PSW));
+	writew(SP -= 2, preadw(A_PSW));
 	writew(SP -= 2, PC);
 
-	PC = readw(014);
-	writew(A_PSW, readw(016));
+	PC = preadw(014);
+	pwritew(A_PSW, preadw(016));
 }
 
 void p_iot(void)
 {
-	writew(SP -= 2, readw(A_PSW));
+	writew(SP -= 2, preadw(A_PSW));
 	writew(SP -= 2, PC);
 
-	PC = readw(020);
-	writew(A_PSW, readw(022));
+	PC = preadw(020);
+	pwritew(A_PSW, preadw(022));
 }
 
 void p_rti(void)
 {
 	PC = readw(SP);
-	writew(A_PSW, readw(SP += 2));
+	pwritew(A_PSW, readw(SP += 2));
 	SP += 2;
 }
 
 void p_rtt(void)
 {
 	PC = readw(SP);
-	writew(A_PSW, readw(SP += 2));
+	pwritew(A_PSW, readw(SP += 2));
 	SP += 2;
 }
 
@@ -1488,13 +1488,13 @@ void p_illegal(void)
 	system_exit(SYSTEM_ERROR, "error: illegal instruction\n");
 }
 
-void pdp11_int(uint16_t pc)
+void pdp11_int(uint32_t pc)
 {
-	writew(SP -= 2, readw(A_PSW));
+	writew(SP -= 2, preadw(A_PSW));
 	writew(SP -= 2, PC);
 
-	PC = readw(pc);
-	writew(A_PSW, readw(pc + 2));
+	PC = preadw(pc);
+	pwritew(A_PSW, preadw(pc + 2));
 }
 
 void pdp11_run(void)
@@ -1509,6 +1509,7 @@ void pdp11_run(void)
 	flag = get_low_psw();
 
 	for (;;) {
+		//mmu_next_ispace();
 		curins = readw(PC);
 		debug_print_regs(reg);
 		debug_print_init();
@@ -1526,19 +1527,18 @@ void pdp11_run(void)
 			}
 		}
 
-		if ((xbuf = readw(A_XBUF)) != 0) {
+		if ((xbuf = preadw(A_XBUF)) != 0) {
 			terminal_putchar(xbuf);
-			writew(A_XBUF, 0);
+			pwritew(A_XBUF, 0);
 		}
 
 		if ((rbuf = terminal_getchar()) != TERMINAL_NOCH) {
-			writew(A_RBUF, rbuf);
-			rbuf_readed();
-			writew(A_RCSR, 0000200);
+			pwritew(A_RBUF, rbuf);
+			pwritew(A_RCSR, 0000200);
 		}
 
 		if (rbuf_readed()) {
-			writew(A_RCSR, 0000000);
+			pwritew(A_RCSR, 0000000);
 		}
 
 		rk11_cycle();

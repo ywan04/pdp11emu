@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void pdp11_int(uint16_t);
+void pdp11_int(uint32_t);
 void pdp11_run(void);
 
 /*
