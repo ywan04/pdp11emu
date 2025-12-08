@@ -173,21 +173,28 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		*adr = reg[regn];
 		return 0;
 	case 2:
-		if (regn == 7)
+		if (regn == 7) {
+			mmu_use_ispace();
 			debug_print("#%o", readw(reg[regn]));
-		else
+			mmu_use_ispace();
+		} else {
 			debug_print("(r%d)+", regn);
+		}
 
 		*adr = reg[regn];
 		reg[regn] += (regn >= 6) ? 2 : incv;
 		return 0;
 	case 3:
-		*adr = readw(reg[regn]);
 
-		if (regn == 7)
+		if (regn == 7) {
+			mmu_use_ispace();
+			*adr = readw(reg[regn]);
 			debug_print("@#%o", *adr);
-		else
+			mmu_use_ispace();
+		} else {
+			*adr = readw(reg[regn]);
 			debug_print("@(r%d)+", regn);
+		}
 
 		reg[regn] += 2;
 		return 0;
@@ -204,6 +211,7 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		*adr = readw(reg[regn]);
 		return 0;
 	case 6:
+		mmu_use_ispace();
 		x = readw(PC);
 		PC += 2;
 		if (regn == 7)
@@ -214,6 +222,7 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		*adr = reg[regn] + x;
 		return 0;
 	case 7:
+		mmu_use_ispace();
 		x = readw(PC);
 		PC += 2;
 		if (regn == 7)
@@ -1513,7 +1522,7 @@ void pdp11_run(void)
 	flag = get_psw();
 
 	for (;;) {
-		//mmu_next_ispace();
+		mmu_use_ispace();
 		curins = readw(PC);
 		debug_print_regs(reg);
 		debug_print_init();

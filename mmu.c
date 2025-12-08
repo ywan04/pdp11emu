@@ -12,3 +12,7 @@ uint32_t mmu_get_physical(uint16_t vadr)
 	// todo
 	return vadr;
 }
+
+void mmu_use_ispace(void)
+{
+}
