@@ -20,7 +20,7 @@
 #define A_RKDA 0777412
 
 void unibus_init(void);
-void *get_low_psw(void);
+void *get_psw(void);
 char rbuf_readed(void);
 void mem_addressing(uint32_t adr);
 void pwritew(uint32_t padr, uint16_t w);

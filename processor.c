@@ -14,12 +14,16 @@
 #define SP reg[6]
 
 struct {
-	uint8_t P : 3;
-	uint8_t T : 1;
-	uint8_t N : 1;
-	uint8_t Z : 1;
-	uint8_t V : 1;
-	uint8_t C : 1;
+	uint16_t mode : 2;
+	uint16_t pmod : 2;
+	uint16_t gnrs : 1;
+	uint16_t XXXX : 3;
+	uint16_t P : 3;
+	uint16_t T : 1;
+	uint16_t N : 1;
+	uint16_t Z : 1;
+	uint16_t V : 1;
+	uint16_t C : 1;
 } *flag;
 
 typedef struct {
@@ -1506,7 +1510,7 @@ void pdp11_run(void)
 	PC = 01000;
 
 	unibus_init();
-	flag = get_low_psw();
+	flag = get_psw();
 
 	for (;;) {
 		//mmu_next_ispace();

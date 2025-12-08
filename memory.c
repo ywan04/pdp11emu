@@ -22,9 +22,9 @@ void unibus_init(void)
 	rk11_init();
 }
 
-void *get_low_psw(void)
+void *get_psw(void)
 {
-	return &memory.bytes[A_PSW+1];
+	return &memory.bytes[A_PSW];
 }
 
 char rbuf_readed(void)
