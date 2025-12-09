@@ -4,6 +4,7 @@
 #include "terminal.h"
 #include "system.h"
 #include "rk11.h"
+#include "mmu.h"
 
 #include <ncurses.h>
 
@@ -1402,38 +1403,22 @@ void p_sob(void)
 
 void p_emt(void)
 {
-	writew(SP -= 2, preadw(A_PSW));
-	writew(SP -= 2, PC);
-
-	PC = preadw(030);
-	pwritew(A_PSW, preadw(032));
+	pdp11_int(030, 7);
 }
 
 void p_trap(void)
 {
-	writew(SP -= 2, preadw(A_PSW));
-	writew(SP -= 2, PC);
-
-	PC = preadw(034);
-	pwritew(A_PSW, preadw(036));
+	pdp11_int(034, 7);
 }
 
 void p_bpt(void)
 {
-	writew(SP -= 2, preadw(A_PSW));
-	writew(SP -= 2, PC);
-
-	PC = preadw(014);
-	pwritew(A_PSW, preadw(016));
+	pdp11_int(014, 7);
 }
 
 void p_iot(void)
 {
-	writew(SP -= 2, preadw(A_PSW));
-	writew(SP -= 2, PC);
-
-	PC = preadw(020);
-	pwritew(A_PSW, preadw(022));
+	pdp11_int(020, 7);
 }
 
 void p_rti(void)
@@ -1501,13 +1486,16 @@ void p_illegal(void)
 	system_exit(SYSTEM_ERROR, "error: illegal instruction\n");
 }
 
-void pdp11_int(uint32_t pc)
+void pdp11_int(uint32_t vl, uint8_t p)
 {
+	if (p <= flag->P)
+		return;
+
 	writew(SP -= 2, preadw(A_PSW));
 	writew(SP -= 2, PC);
 
-	PC = preadw(pc);
-	pwritew(A_PSW, preadw(pc + 2));
+	PC = preadw(vl);
+	pwritew(A_PSW, preadw(vl + 2));
 }
 
 void pdp11_run(void)
