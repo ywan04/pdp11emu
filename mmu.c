@@ -15,4 +15,10 @@ uint32_t mmu_get_physical(uint16_t vadr)
 
 void mmu_use_ispace(void)
 {
+	// todo
+}
+
+void mmu_cycle(void)
+{
+	// todo
 }
