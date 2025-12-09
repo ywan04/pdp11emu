@@ -1,6 +1,7 @@
 #include "memory.h"
 #include "system.h"
 #include "rk11.h"
+#include "dl11.h"
 #include "mmu.h"
 
 #include <stdio.h>
@@ -14,11 +15,7 @@ static char rbuf_r;
 
 void unibus_init(void)
 {
-	pwritew(A_XCSR, 0000200); /* XCSR: transmitter ready */
-	pwritew(A_XBUF, 0000000);
-	pwritew(A_RCSR, 0000000);
-	pwritew(A_RBUF, 0000000);
-
+	dl11_init();
 	rk11_init();
 }
 

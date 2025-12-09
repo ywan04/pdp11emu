@@ -4,6 +4,7 @@
 #include "terminal.h"
 #include "system.h"
 #include "rk11.h"
+#include "dl11.h"
 #include "mmu.h"
 
 #include <ncurses.h>
@@ -1501,8 +1502,6 @@ void pdp11_int(uint32_t vl, uint8_t p)
 void pdp11_run(void)
 {
 	uint8_t i, n;
-	uint16_t xbuf;
-	int rbuf;
 	
 	PC = 01000;
 
@@ -1528,17 +1527,7 @@ void pdp11_run(void)
 			}
 		}
 
-		if ((xbuf = preadw(A_XBUF)) != 0) {
-			terminal_putchar(xbuf);
-			pwritew(A_XBUF, 0);
-		}
-		if ((rbuf = terminal_getchar()) != TERMINAL_NOCH) {
-			pwritew(A_RBUF, rbuf);
-			pwritew(A_RCSR, 0000200);
-		}
-		if (rbuf_readed()) {
-			pwritew(A_RCSR, 0000000);
-		}
+		dl11_cycle();
 		rk11_cycle();
 		mmu_cycle();
 
