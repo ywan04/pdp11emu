@@ -2,6 +2,18 @@
 #include "memory.h"
 #include "terminal.h"
 
+static char rbuf_r;
+
+char rbuf_readed(void)
+{
+	if (rbuf_r) {
+		rbuf_r = 0;
+		return 1;
+	}
+
+	return 0;
+}
+
 void dl11_init(void)
 {
 	pwritew(A_XCSR, 0000200); /* XCSR: transmitter ready */
@@ -26,4 +38,10 @@ void dl11_cycle(void)
 	if (rbuf_readed()) {
 		pwritew(A_RCSR, 0000000);
 	}
+}
+
+void dl11_addressing(uint32_t padr)
+{
+	if (padr == A_RBUF)
+		rbuf_r = 1;
 }

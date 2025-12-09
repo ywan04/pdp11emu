@@ -1527,9 +1527,9 @@ void pdp11_run(void)
 			}
 		}
 
+		mmu_cycle();
 		dl11_cycle();
 		rk11_cycle();
-		mmu_cycle();
 
 		if (quit) {
 			terminal_refresh();

@@ -11,8 +11,6 @@ static union {
 	uint8_t bytes[MEMSIZE];
 } memory;
 
-static char rbuf_r;
-
 void unibus_init(void)
 {
 	dl11_init();
@@ -24,20 +22,9 @@ void *get_psw(void)
 	return &memory.bytes[A_PSW];
 }
 
-char rbuf_readed(void)
-{
-	if (rbuf_r) {
-		rbuf_r = 0;
-		return 1;
-	}
-
-	return 0;
-}
-
 void mem_addressing(uint32_t padr)
 {
-	if (padr == A_RBUF)
-		rbuf_r = 1;
+	dl11_addressing(padr);
 }
 
 uint32_t to_physical(uint16_t adr)
