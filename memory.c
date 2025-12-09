@@ -75,6 +75,11 @@ void writew(uint16_t adr, uint16_t w)
 
 	padr = to_physical(adr);
 
+	if (padr % 2) {
+		pdp11_int(004, 7);
+		return;
+	}
+
 	mem_addressing(padr);
 
 	memory.words[padr/2] = w;
@@ -85,6 +90,11 @@ uint16_t readw(uint16_t adr)
 	uint32_t padr;
 
 	padr = to_physical(adr);
+
+	if (padr % 2) {
+		pdp11_int(004, 7);
+		return;
+	}
 
 	mem_addressing(padr);
 

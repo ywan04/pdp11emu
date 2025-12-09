@@ -1484,7 +1484,7 @@ void p_cco(void)
 
 void p_illegal(void)
 {
-	system_exit(SYSTEM_ERROR, "error: illegal instruction\n");
+	pdp11_int(010, 7);
 }
 
 void pdp11_int(uint32_t vl, uint8_t p)
