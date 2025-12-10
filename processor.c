@@ -5,6 +5,7 @@
 #include "system.h"
 #include "rk11.h"
 #include "dl11.h"
+#include "kw11l.h"
 #include "mmu.h"
 
 #include <ncurses.h>
@@ -1530,6 +1531,7 @@ void pdp11_run(void)
 		mmu_cycle();
 		dl11_cycle();
 		rk11_cycle();
+		kw11l_cycle();
 
 		if (quit) {
 			terminal_refresh();

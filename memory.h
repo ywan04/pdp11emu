@@ -19,6 +19,8 @@
 #define A_RKBA 0777410
 #define A_RKDA 0777412
 
+#define A_LKS  0777546
+
 void unibus_init(void);
 void *get_psw(void);
 void mem_addressing(uint32_t adr);

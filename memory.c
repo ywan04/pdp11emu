@@ -2,6 +2,7 @@
 #include "system.h"
 #include "rk11.h"
 #include "dl11.h"
+#include "kw11l.h"
 #include "mmu.h"
 
 #include <stdio.h>
@@ -15,6 +16,7 @@ void unibus_init(void)
 {
 	dl11_init();
 	rk11_init();
+	kw11l_init();
 }
 
 void *get_psw(void)
@@ -93,7 +95,7 @@ uint16_t readw(uint16_t adr)
 
 	if (padr % 2) {
 		pdp11_int(004, 7);
-		return;
+		return 0;
 	}
 
 	mem_addressing(padr);

@@ -1,5 +1,6 @@
 #include "dl11.h"
 #include "memory.h"
+#include "processor.h"
 #include "terminal.h"
 
 static char rbuf_r;
