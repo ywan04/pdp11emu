@@ -7,6 +7,15 @@
 
 #define A_PSW  0777776
 
+#define A_SR0  0777572
+#define A_SR1  0777574
+#define A_SR2  0777576
+#define A_SR3  0772516
+
+#define A_USRR 0777676
+#define A_SPVR 0772276
+#define A_KRNR 0772376
+
 #define A_RCSR 0777560
 #define A_RBUF 0777562
 #define A_XCSR 0777564
@@ -22,7 +31,10 @@
 #define A_LKS  0777546
 
 void unibus_init(void);
-void *get_psw(void);
+void *mem_get_psw(void);
+void *mem_get_user_regs(void);
+void *mem_get_supervisor_regs(void);
+void *mem_get_kernel_regs(void);
 void mem_addressing(uint32_t adr);
 void pwritew(uint32_t padr, uint16_t w);
 uint16_t preadw(uint32_t padr);

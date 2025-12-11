@@ -1506,8 +1506,10 @@ void pdp11_run(void)
 	
 	PC = 01000;
 
+	mmu_preinit();
+	flag = mem_get_psw();
+
 	unibus_init();
-	flag = get_psw();
 
 	for (;;) {
 		mmu_use_ispace();

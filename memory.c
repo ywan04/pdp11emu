@@ -1,4 +1,5 @@
 #include "memory.h"
+#include "processor.h"
 #include "system.h"
 #include "rk11.h"
 #include "dl11.h"
@@ -19,9 +20,24 @@ void unibus_init(void)
 	kw11l_init();
 }
 
-void *get_psw(void)
+void *mem_get_psw(void)
 {
 	return &memory.bytes[A_PSW];
+}
+
+void *mem_get_user_regs(void)
+{
+	return &memory.bytes[A_USRR];
+}
+
+void *mem_get_supervisor_regs(void)
+{
+	return &memory.bytes[A_SPVR];
+}
+
+void *mem_get_kernel_regs(void)
+{
+	return &memory.bytes[A_KRNR];
 }
 
 void mem_addressing(uint32_t padr)

@@ -7,5 +7,6 @@ uint8_t mmu_enabled(void);
 uint32_t mmu_get_physical(uint16_t vadr);
 void mmu_use_ispace(void);
 void mmu_cycle(void);
+void mmu_preinit(void);
 
 #endif /* MMU__H */
