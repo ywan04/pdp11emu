@@ -1,9 +1,9 @@
 #include "mmu.h"
 
 enum {
-	MMU_USER,
-	MMU_SUPERVISOR,
-	MMU_KERNEL
+	MMU_REG_USER,
+	MMU_REG_SUPERVISOR,
+	MMU_REG_KERNEL
 };
 
 struct {
@@ -16,7 +16,6 @@ uint8_t mmu_enabled(void)
 	// todo
 	return 0;
 }
-
 
 uint32_t mmu_get_physical(uint16_t vadr)
 {
@@ -36,7 +35,7 @@ void mmu_cycle(void)
 
 void mmu_preinit(void)
 {
-	reg[MMU_USER]       = mem_get_user_regs();
-	reg[MMU_SUPERVISOR] = mem_get_supervisor_regs();
-	reg[MMU_KERNEL]     = mem_get_kernel_regs();
+	reg[MMU_REG_USER]       = mem_get_user_regs();
+	reg[MMU_REG_SUPERVISOR] = mem_get_supervisor_regs();
+	reg[MMU_REG_KERNEL]     = mem_get_kernel_regs();
 }

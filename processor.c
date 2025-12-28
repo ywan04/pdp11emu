@@ -1496,8 +1496,8 @@ void pdp11_int(uint32_t vl, uint8_t p)
 	writew(SP -= 2, preadw(A_PSW));
 	writew(SP -= 2, PC);
 
-	PC = preadw(vl);
-	pwritew(A_PSW, preadw(vl + 2));
+	PC = readw(vl);
+	pwritew(A_PSW, readw(vl + 2));
 }
 
 void pdp11_run(void)
