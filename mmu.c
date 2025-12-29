@@ -11,10 +11,13 @@ struct {
 	uint16_t pdr[2][8];
 } *reg[3];
 
-uint8_t mmu_enabled(void)
+uint16_t mmu_enabled(void)
 {
-	// todo
-	return 0;
+	uint16_t sr0_data;
+
+	sr0_data = preadw(A_SR0);
+
+	return sr0_data & 01;
 }
 
 uint32_t mmu_get_physical(uint16_t vadr)
