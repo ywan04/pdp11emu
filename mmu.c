@@ -1,4 +1,5 @@
 #include "mmu.h"
+#include "memory.h"
 
 enum {
 	MMU_REG_USER,
