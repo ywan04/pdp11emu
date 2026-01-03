@@ -3,8 +3,13 @@
 
 #include <stdint.h>
 
+#define PSW_MODE_KERNEL     0
+#define PSW_MODE_SUPERVISOR 1
+#define PSW_MODE_USER       3
+
 void pdp11_int(uint32_t vl, uint8_t p);
 void pdp11_run(void);
+uint8_t psw_get_mode(void);
 
 /*
  * === INSTRUCTIONS ===

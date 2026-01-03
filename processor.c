@@ -151,6 +151,11 @@ static uint16_t reg[8];
 static uint16_t curins;
 static uint8_t quit;
 
+uint8_t psw_get_mode(void)
+{
+	return flag->mode;
+}
+
 /*
  * Returns 1 if src is register and 0 otherwise
  */
