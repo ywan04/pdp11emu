@@ -3,6 +3,9 @@
 #include "processor.h"
 #include "system.h"
 
+#define MMU_REG_DSPACE 0
+#define MMU_REG_ISPACE 1
+
 enum {
 	MMU_REG_USER,
 	MMU_REG_SUPERVISOR,
@@ -49,17 +52,18 @@ uint32_t mmu_get_physical(uint16_t vadr)
 	vadr &= 017777;
 	adr += vadr;
 
+	cur_space = MMU_REG_DSPACE;
+
 	return adr;
 }
 
 void mmu_use_ispace(void)
 {
-	// todo
+	cur_space = MMU_REG_ISPACE;
 }
 
 void mmu_cycle(void)
 {
-	// todo
 }
 
 void mmu_preinit(void)
