@@ -1495,10 +1495,17 @@ void p_illegal(void)
 
 void pdp11_int(uint32_t vl, uint8_t p)
 {
+	uint16_t opsw;
+
 	if (p <= flag->P)
 		return;
 
-	writew(SP -= 2, preadw(A_PSW));
+	opsw = preadw(A_PSW);
+
+	flag->pmod = flag->mode;
+	flag->mode = PSW_MODE_KERNEL;
+
+	writew(SP -= 2, opsw);
 	writew(SP -= 2, PC);
 
 	PC = readw(vl);
