@@ -21,6 +21,7 @@ void help(const char *progname)
 	puts("  d\tattach disk");
 	puts("  D\tattach disk (READ ONLY)");
 	puts("  t\ttrace to file");
+	puts("  C\tdisable cycle accuracy");
 }
 
 int main(int argc, char *argv[])
@@ -75,6 +76,9 @@ int main(int argc, char *argv[])
 				return SYSTEM_ERROR;
 			}
 			debug_set_trace(argv[j++]);
+			break;
+		case 'C':
+			pdp11_disable_accuracy();
 			break;
 		default:
 			fprintf(stderr,

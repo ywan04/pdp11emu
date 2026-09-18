@@ -10,6 +10,7 @@
 void pdp11_int(uint32_t vl, uint8_t p);
 void pdp11_run(void);
 uint8_t psw_get_mode(void);
+void pdp11_disable_accuracy(void);
 
 /*
  * === INSTRUCTIONS ===

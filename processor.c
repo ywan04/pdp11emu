@@ -153,6 +153,7 @@ static uint16_t reg[8];
 static uint16_t curins;
 static uint8_t quit;
 static uint64_t ins_time;
+static uint8_t disable_accuracy;
 
 uint8_t psw_get_mode(void)
 {
@@ -1496,6 +1497,11 @@ void p_illegal(void)
 	pdp11_int(010, 7);
 }
 
+void pdp11_disable_accuracy(void)
+{
+	disable_accuracy = 1;
+}
+
 void pdp11_int(uint32_t vl, uint8_t p)
 {
 	uint16_t opsw;
@@ -1555,7 +1561,7 @@ void pdp11_run(void)
 		kw11l_cycle();
 
 		delta_time = system_gettime() - start_time;
-		if (delta_time < ins_time)
+		if (delta_time < ins_time && !disable_accuracy)
 			system_nsleep(ins_time - delta_time);
 
 		if (quit) {
