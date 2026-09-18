@@ -1,6 +1,10 @@
 #include "memory.h"
+#include "processor.h"
 #include "system.h"
 #include "rk11.h"
+#include "dl11.h"
+#include "kw11l.h"
+#include "mmu.h"
 
 #include <stdio.h>
 
@@ -9,66 +13,110 @@ static union {
 	uint8_t bytes[MEMSIZE];
 } memory;
 
-static char rbuf_r;
-
 void unibus_init(void)
 {
-	writew(A_XCSR, 0000200); /* XCSR: transmitter ready */
-	writew(A_XBUF, 0000000);
-	writew(A_RCSR, 0000000);
-	writew(A_RBUF, 0000000);
-	rbuf_readed();
-
+	dl11_init();
 	rk11_init();
+	kw11l_init();
 }
 
-void *get_low_psw(void)
+void *mem_get_psw(void)
 {
-	return &memory.bytes[A_PSW+1];
+	return &memory.bytes[A_PSW];
 }
 
-char rbuf_readed(void)
+void *mem_get_user_regs(void)
 {
-	if (rbuf_r) {
-		rbuf_r = 0;
-		return 1;
+	return &memory.bytes[A_USRR];
+}
+
+void *mem_get_supervisor_regs(void)
+{
+	return &memory.bytes[A_SPVR];
+}
+
+void *mem_get_kernel_regs(void)
+{
+	return &memory.bytes[A_KRNR];
+}
+
+void mem_addressing(uint32_t padr)
+{
+	dl11_addressing(padr);
+}
+
+uint32_t to_physical(uint16_t adr)
+{
+	if (mmu_enabled()) {
+		return mmu_get_physical(adr);
 	}
-
-	return 0;
+	if (adr & 0160000)
+		return (uint32_t)adr | 0600000;
+	return adr;
 }
 
-void mem_addressing(uint16_t adr)
+void pwritew(uint32_t padr, uint16_t w)
 {
-	if (adr == A_RBUF)
-		rbuf_r = 1;
+	memory.words[padr/2] = w;
+}
+
+uint16_t preadw(uint32_t padr)
+{
+	return memory.words[padr/2];
 }
 
 void writeb(uint16_t adr, uint8_t b)
 {
-	mem_addressing(adr);
+	uint32_t padr;
 
-	memory.bytes[adr] = b;
+	padr = to_physical(adr);
+
+	mem_addressing(padr);
+
+	memory.bytes[padr] = b;
 }
 
 uint8_t readb(uint16_t adr)
 {
-	mem_addressing(adr);
+	uint32_t padr;
 
-	return memory.bytes[adr];
+	padr = to_physical(adr);
+
+	mem_addressing(padr);
+
+	return memory.bytes[padr];
 }
 
 void writew(uint16_t adr, uint16_t w)
 {
-	mem_addressing(adr);
+	uint32_t padr;
 
-	memory.words[adr/2] = w;
+	padr = to_physical(adr);
+
+	if (padr % 2) {
+		pdp11_int(004, 7);
+		return;
+	}
+
+	mem_addressing(padr);
+
+	memory.words[padr/2] = w;
 }
 
 uint16_t readw(uint16_t adr)
 {
-	mem_addressing(adr);
+	uint32_t padr;
 
-	return memory.words[adr/2];
+	padr = to_physical(adr);
+
+	if (padr % 2) {
+		pdp11_int(004, 7);
+		return 0;
+	}
+
+	mem_addressing(padr);
+
+	return memory.words[padr/2];
 }
 
 void loadfile(const char *filename)

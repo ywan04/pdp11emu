@@ -21,7 +21,7 @@ struct {
 
 void rk11_init(void)
 {
-	writew(A_RKDA, 0000000);
+	pwritew(A_RKDA, 0000000);
 }
 
 void rk11_cycle(void)
@@ -31,19 +31,19 @@ void rk11_cycle(void)
 	uint16_t adr;
 	int16_t wcr;
 
-	rkcs_data = readw(A_RKCS);
+	rkcs_data = preadw(A_RKCS);
 	go = rkcs_data & 01;
 	func = (rkcs_data >> 1) & 07;
 
-	rkda_data = readw(A_RKDA);
+	rkda_data = preadw(A_RKDA);
 	n = rkda_data >> 13;
 	cyl = (rkda_data >> 5) & 0377;
 	sur = (rkda_data >> 4) & 01;
 	sec = rkda_data & 017;
 	cw = 0;
 
-	wcr = readw(A_RKWC);
-	adr = readw(A_RKBA);
+	wcr = preadw(A_RKWC);
+	adr = preadw(A_RKBA);
 
 	if (go) {
 		rkcs_data &= 0177776;
@@ -53,7 +53,8 @@ void rk11_cycle(void)
 			break;
 		case RK11_WRITE:
 			for (; wcr < 0; ++wcr, adr += 2) {
-				rk11_writew(n, cyl, sur, sec, cw++, readw(adr));
+				rk11_writew(n, cyl, sur, sec, cw++,
+					    preadw(adr));
 				if (cw >= 256) {
 					cw = 0;
 					++sec;
@@ -73,7 +74,8 @@ void rk11_cycle(void)
 			break;
 		case RK11_READ:
 			for (; wcr < 0; ++wcr, adr += 2) {
-				writew(adr, rk11_readw(n, cyl, sur, sec, cw++));
+				pwritew(adr,
+					rk11_readw(n, cyl, sur, sec, cw++));
 				if (cw >= 256) {
 					cw = 0;
 					++sec;
@@ -104,7 +106,7 @@ void rk11_cycle(void)
 		}
 
 		rkcs_data |= 0200;
-		writew(A_RKCS, rkcs_data);
+		pwritew(A_RKCS, rkcs_data);
 	}
 }
 

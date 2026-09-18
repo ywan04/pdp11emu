@@ -1,4 +1,4 @@
-VERSION = 0.1
+VERSION = 0.2
 
 # flags
 CFLAGS  = -std=c99 -pedantic -Wall -O2 -DVERSION=\"${VERSION}\"

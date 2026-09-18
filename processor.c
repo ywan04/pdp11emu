@@ -4,6 +4,9 @@
 #include "terminal.h"
 #include "system.h"
 #include "rk11.h"
+#include "dl11.h"
+#include "kw11l.h"
+#include "mmu.h"
 
 #include <ncurses.h>
 
@@ -14,12 +17,16 @@
 #define SP reg[6]
 
 struct {
-	uint8_t P : 3;
-	uint8_t T : 1;
-	uint8_t N : 1;
-	uint8_t Z : 1;
-	uint8_t V : 1;
-	uint8_t C : 1;
+	uint16_t mode : 2;
+	uint16_t pmod : 2;
+	uint16_t gnrs : 1;
+	uint16_t XXXX : 3;
+	uint16_t P : 3;
+	uint16_t T : 1;
+	uint16_t N : 1;
+	uint16_t Z : 1;
+	uint16_t V : 1;
+	uint16_t C : 1;
 } *flag;
 
 typedef struct {
@@ -144,6 +151,11 @@ static uint16_t reg[8];
 static uint16_t curins;
 static uint8_t quit;
 
+uint8_t psw_get_mode(void)
+{
+	return flag->mode;
+}
+
 /*
  * Returns 1 if src is register and 0 otherwise
  */
@@ -169,21 +181,28 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		*adr = reg[regn];
 		return 0;
 	case 2:
-		if (regn == 7)
+		if (regn == 7) {
+			mmu_use_ispace();
 			debug_print("#%o", readw(reg[regn]));
-		else
+			mmu_use_ispace();
+		} else {
 			debug_print("(r%d)+", regn);
+		}
 
 		*adr = reg[regn];
 		reg[regn] += (regn >= 6) ? 2 : incv;
 		return 0;
 	case 3:
-		*adr = readw(reg[regn]);
 
-		if (regn == 7)
+		if (regn == 7) {
+			mmu_use_ispace();
+			*adr = readw(reg[regn]);
 			debug_print("@#%o", *adr);
-		else
+			mmu_use_ispace();
+		} else {
+			*adr = readw(reg[regn]);
 			debug_print("@(r%d)+", regn);
+		}
 
 		reg[regn] += 2;
 		return 0;
@@ -200,6 +219,7 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		*adr = readw(reg[regn]);
 		return 0;
 	case 6:
+		mmu_use_ispace();
 		x = readw(PC);
 		PC += 2;
 		if (regn == 7)
@@ -210,6 +230,7 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
 		*adr = reg[regn] + x;
 		return 0;
 	case 7:
+		mmu_use_ispace();
 		x = readw(PC);
 		PC += 2;
 		if (regn == 7)
@@ -1379,7 +1400,7 @@ void p_sob(void)
 	nn = (curins & 0000077) * 2;
 	r = (curins & 0000700) >> 6;
 
-	debug_print(" r%d .-%d", r, nn);
+	debug_print(" r%d .-%d", r, nn - 2);
 
 	--reg[r];
 
@@ -1389,51 +1410,35 @@ void p_sob(void)
 
 void p_emt(void)
 {
-	writew(SP -= 2, readw(A_PSW));
-	writew(SP -= 2, PC);
-
-	PC = readw(030);
-	writew(A_PSW, readw(032));
+	pdp11_int(030, 7);
 }
 
 void p_trap(void)
 {
-	writew(SP -= 2, readw(A_PSW));
-	writew(SP -= 2, PC);
-
-	PC = readw(034);
-	writew(A_PSW, readw(036));
+	pdp11_int(034, 7);
 }
 
 void p_bpt(void)
 {
-	writew(SP -= 2, readw(A_PSW));
-	writew(SP -= 2, PC);
-
-	PC = readw(014);
-	writew(A_PSW, readw(016));
+	pdp11_int(014, 7);
 }
 
 void p_iot(void)
 {
-	writew(SP -= 2, readw(A_PSW));
-	writew(SP -= 2, PC);
-
-	PC = readw(020);
-	writew(A_PSW, readw(022));
+	pdp11_int(020, 7);
 }
 
 void p_rti(void)
 {
 	PC = readw(SP);
-	writew(A_PSW, readw(SP += 2));
+	pwritew(A_PSW, readw(SP += 2));
 	SP += 2;
 }
 
 void p_rtt(void)
 {
 	PC = readw(SP);
-	writew(A_PSW, readw(SP += 2));
+	pwritew(A_PSW, readw(SP += 2));
 	SP += 2;
 }
 
@@ -1485,30 +1490,41 @@ void p_cco(void)
 
 void p_illegal(void)
 {
-	system_exit(SYSTEM_ERROR, "error: illegal instruction\n");
+	pdp11_int(010, 7);
 }
 
-void pdp11_int(uint16_t pc)
+void pdp11_int(uint32_t vl, uint8_t p)
 {
-	writew(SP -= 2, readw(A_PSW));
+	uint16_t opsw;
+
+	if (p <= flag->P)
+		return;
+
+	opsw = preadw(A_PSW);
+
+	flag->pmod = flag->mode;
+	flag->mode = PSW_MODE_KERNEL;
+
+	writew(SP -= 2, opsw);
 	writew(SP -= 2, PC);
 
-	PC = readw(pc);
-	writew(A_PSW, readw(pc + 2));
+	PC = readw(vl);
+	pwritew(A_PSW, readw(vl + 2));
 }
 
 void pdp11_run(void)
 {
 	uint8_t i, n;
-	uint16_t xbuf;
-	int rbuf;
 	
 	PC = 01000;
 
+	mmu_preinit();
+	flag = mem_get_psw();
+
 	unibus_init();
-	flag = get_low_psw();
 
 	for (;;) {
+		mmu_use_ispace();
 		curins = readw(PC);
 		debug_print_regs(reg);
 		debug_print_init();
@@ -1526,22 +1542,10 @@ void pdp11_run(void)
 			}
 		}
 
-		if ((xbuf = readw(A_XBUF)) != 0) {
-			terminal_putchar(xbuf);
-			writew(A_XBUF, 0);
-		}
-
-		if ((rbuf = terminal_getchar()) != TERMINAL_NOCH) {
-			writew(A_RBUF, rbuf);
-			rbuf_readed();
-			writew(A_RCSR, 0000200);
-		}
-
-		if (rbuf_readed()) {
-			writew(A_RCSR, 0000000);
-		}
-
+		mmu_cycle();
+		dl11_cycle();
 		rk11_cycle();
+		kw11l_cycle();
 
 		if (quit) {
 			terminal_refresh();
