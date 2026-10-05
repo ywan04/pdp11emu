@@ -13,8 +13,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <time.h>
-
 #define PC reg[7]
 #define SP reg[6]
 
@@ -1524,7 +1522,6 @@ void pdp11_int(uint32_t vl, uint8_t p)
 void pdp11_run(void)
 {
 	uint8_t i, n;
-	uint64_t start_time, delta_time;
 	
 	PC = 01000;
 
@@ -1534,7 +1531,7 @@ void pdp11_run(void)
 	unibus_init();
 
 	for (;;) {
-		start_time = system_gettime();
+		system_start_instruction();
 		ins_time = 0;
 
 		mmu_use_ispace();
@@ -1560,9 +1557,8 @@ void pdp11_run(void)
 		rk11_cycle();
 		kw11l_cycle();
 
-		delta_time = system_gettime() - start_time;
-		if (delta_time < ins_time && !disable_accuracy)
-			system_nsleep(ins_time - delta_time);
+		if (!disable_accuracy)
+			system_finish_instruction(ins_time);
 
 		if (quit) {
 			terminal_refresh();

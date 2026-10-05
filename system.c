@@ -11,6 +11,8 @@
 #include <time.h>
 #include <unistd.h>
 
+static uint64_t start_time;
+
 void system_exit(int err, const char *strf, ...)
 {
 	va_list args;
@@ -29,7 +31,7 @@ void system_exit(int err, const char *strf, ...)
 	exit(err);
 }
 
-void system_nsleep(uint64_t nsec)
+void nsleep(uint64_t nsec)
 {
 	struct timespec t;
 
@@ -39,7 +41,7 @@ void system_nsleep(uint64_t nsec)
 	nanosleep(&t, NULL);
 }
 
-uint64_t system_gettime(void)
+uint64_t gettime(void)
 {
 	struct timespec t;
 	uint64_t nsec;
@@ -50,4 +52,18 @@ uint64_t system_gettime(void)
 	nsec += t.tv_nsec;
 
 	return nsec;
+}
+
+void system_start_instruction(void)
+{
+	start_time = gettime();
+}
+
+void system_finish_instruction(uint64_t ins_time)
+{
+	uint64_t delta_time;
+
+	delta_time = gettime() - start_time;
+	if (delta_time < ins_time)
+		nsleep(ins_time - delta_time);
 }
