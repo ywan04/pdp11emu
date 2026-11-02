@@ -152,6 +152,7 @@ static uint16_t curins;
 static uint8_t quit;
 static uint64_t ins_time;
 static uint8_t disable_accuracy;
+static uint8_t src_mod, dst_mod;
 
 uint8_t psw_get_mode(void)
 {
@@ -161,17 +162,17 @@ uint8_t psw_get_mode(void)
 /*
  * Returns 1 if src is register and 0 otherwise
  */
-uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv)
+uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv, uint8_t *mod)
 {
-	uint8_t mod, regn;
+	uint8_t regn;
 	uint16_t x;
 
 	debug_print(" ");
 	
-	mod  = arg >> 3;
+	*mod = arg >> 3;
 	regn = arg & 07;
 
-	switch (mod) {
+	switch (*mod) {
 	case 0:
 		debug_print("r%d", regn);
 
@@ -256,7 +257,7 @@ uint8_t get_src(uint16_t *adr)
 
 	ss = (uint8_t)((curins & 0007700) >> 6);
 
-	is_reg = parse_arg(adr, ss, 2);
+	is_reg = parse_arg(adr, ss, 2, &src_mod);
 	debug_print(",");
 
 	return is_reg;
@@ -268,7 +269,7 @@ uint8_t get_dst(uint16_t *adr)
 	
 	dd = (uint8_t)(curins & 0000077);
 
-	return parse_arg(adr, dd, 2);
+	return parse_arg(adr, dd, 2, &dst_mod);
 }
 
 uint8_t get_srcb(uint16_t *adr)
@@ -278,7 +279,7 @@ uint8_t get_srcb(uint16_t *adr)
 
 	ss = (uint8_t)((curins & 0007700) >> 6);
 
-	is_reg = parse_arg(adr, ss, 1);
+	is_reg = parse_arg(adr, ss, 1, &src_mod);
 	debug_print(",");
 
 	return is_reg;
@@ -290,7 +291,7 @@ uint8_t get_dstb(uint16_t *adr)
 	
 	dd = (uint8_t)(curins & 0000077);
 
-	return parse_arg(adr, dd, 1);
+	return parse_arg(adr, dd, 1, &dst_mod);
 }
 
 void p_clr(void)
