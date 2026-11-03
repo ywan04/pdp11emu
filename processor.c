@@ -1600,6 +1600,7 @@ void pdp11_run(void)
 	for (;;) {
 		system_start_instruction();
 		ins_time = 0;
+		src_mod = dst_mod = 0;
 
 		mmu_use_ispace();
 		curins = readw(PC);
