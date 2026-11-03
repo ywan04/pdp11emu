@@ -1360,11 +1360,11 @@ void p_jsr(void)
 	r = (curins & 0000700) >> 6;
 	debug_print(" r%d", r);
 
-	writew(SP -= 2, reg[r]);
-	reg[r] = PC;
 	if (get_dst(&dst_adr)) {
 		p_illegal();
 	} else {
+		writew(SP -= 2, reg[r]);
+		reg[r] = PC;
 		PC = dst_adr;
 	}
 }
