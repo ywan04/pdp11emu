@@ -250,48 +250,75 @@ uint8_t parse_arg(uint16_t *adr, uint8_t arg, uint16_t incv, uint8_t *mod)
 	}
 }
 
-uint8_t get_src(uint16_t *adr)
+uint8_t get_srcx(uint16_t *adr, uint8_t n_of_bytes)
 {
 	uint8_t ss;
 	uint8_t is_reg;
 
 	ss = (uint8_t)((curins & 0007700) >> 6);
 
-	is_reg = parse_arg(adr, ss, 2, &src_mod);
+	is_reg = parse_arg(adr, ss, n_of_bytes, &src_mod);
 	debug_print(",");
 
+	switch (src_mod) {
+	case 0:
+		break;
+	case 1:
+	case 2:
+		ins_time += 890;
+		break;
+	case 3:
+		ins_time += 1920;
+		break;
+	case 4:
+		ins_time += 1040;
+		break;
+	case 5:
+		ins_time += 2070;
+		break;
+	case 6:
+		ins_time += 1860;
+		break;
+	case 7:
+		ins_time += 2890;
+		break;
+	default:
+		break;
+	}
+
 	return is_reg;
+}
+
+uint8_t get_dstx(uint16_t *adr, uint8_t n_of_bytes)
+{
+	uint8_t dd;
+	uint8_t is_reg;
+	
+	dd = (uint8_t)(curins & 0000077);
+
+	is_reg = parse_arg(adr, dd, n_of_bytes, &dst_mod);
+
+	return is_reg;
+}
+
+uint8_t get_src(uint16_t *adr)
+{
+	return get_srcx(adr, 2);
 }
 
 uint8_t get_dst(uint16_t *adr)
 {
-	uint8_t dd;
-	
-	dd = (uint8_t)(curins & 0000077);
-
-	return parse_arg(adr, dd, 2, &dst_mod);
+	return get_dstx(adr, 2);
 }
 
 uint8_t get_srcb(uint16_t *adr)
 {
-	uint8_t ss;
-	uint8_t is_reg;
-
-	ss = (uint8_t)((curins & 0007700) >> 6);
-
-	is_reg = parse_arg(adr, ss, 1, &src_mod);
-	debug_print(",");
-
-	return is_reg;
+	return get_srcx(adr, 1);
 }
 
 uint8_t get_dstb(uint16_t *adr)
 {
-	uint8_t dd;
-	
-	dd = (uint8_t)(curins & 0000077);
-
-	return parse_arg(adr, dd, 1, &dst_mod);
+	return get_dstx(adr, 1);
 }
 
 void p_clr(void)
