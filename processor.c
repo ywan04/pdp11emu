@@ -298,6 +298,45 @@ uint8_t get_dstx(uint16_t *adr, uint8_t n_of_bytes)
 
 	is_reg = parse_arg(adr, dd, n_of_bytes, &dst_mod);
 
+	if (!is_reg && *adr % 2)
+		ins_time += 150;
+	switch (dst_mod) {
+	case 0:
+		break;
+	case 1:
+	case 2:
+		ins_time += 860;
+		break;
+	case 3:
+		ins_time += 1920;
+		break;
+	case 4:
+		ins_time += 1040;
+		break;
+	case 5:
+		ins_time += 2070;
+		break;
+	case 6:
+		ins_time += 1860;
+		break;
+	case 7:
+		ins_time += 2890;
+		break;
+	default:
+		break;
+	}
+	switch (dst_mod) {
+	case 1:
+	case 2:
+	case 3:
+	case 6:
+	case 7:
+		ins_time += (src_mod > 0) ? 85 : 0;
+		break;
+	default:
+		break;
+	}
+
 	return is_reg;
 }
 
